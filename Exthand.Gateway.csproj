@@ -1,0 +1,47 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <LangVersion>9.0</LangVersion>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Authors>Jean-Gabriel Debaille</Authors>
+    <Company>EXTHAND SA</Company>
+    <Product>Exthand:Gateway STD2</Product>
+    <Copyright>EXTHAND 2023</Copyright>
+    <PackageProjectUrl>https:://www.exthand.com</PackageProjectUrl>
+    <PackageIcon>exthandPicto_FB.png</PackageIcon>
+    <PackageIconUrl />
+    <RepositoryUrl>https://github.com/exthand/Exthand.Gateway</RepositoryUrl>
+    <RepositoryType>GITHUB</RepositoryType>
+    <PackageLicenseExpression>MIT OR Apache-2.0</PackageLicenseExpression>
+    <Description>This library connects you to Exthand:Gateway SAAS. You can then easily initiate payment (PIS) or access bank accounts (AIS) of +1300 open banking APIs worldwide.</Description>
+    <PackageTags>psd2 openbanking exthand</PackageTags>
+    <PackageVersion>5.0.1-alpha</PackageVersion>
+    <AssemblyVersion>5.0.1</AssemblyVersion>
+    <FileVersion>5.0.1</FileVersion>
+    <Version>5.0.1</Version>
+    <Configurations>Release;Debug</Configurations>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType></DebugType>
+    <WarningLevel>4</WarningLevel>
+    <AssemblyName>Exthand.GatewayV2</AssemblyName>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="Microsoft.Extensions.Http" Version="6.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Newtonsoft.Json" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="exthandPicto_FB.png">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+    <None Include="Exthand.Gateway.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -29,5 +29,13 @@ namespace Exthand.GatewayClient.Models
         public string xCorrelationId { get; set; }
 
         public string xOperationId { get; set; }
+
+        public string callId { get; set; }
+
+        public int? sdkStatus { get; set; }
+
+        public string innerMostMessage { get; set; }
+
+        public string innerMostErrorType { get; set; }
     }
 }

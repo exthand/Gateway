@@ -21,8 +21,8 @@ namespace Exthand.GatewayClient.Models
 
         public string balanceType { get; set; }
         public string rawBalanceType { get; set; }
-        public DateTime? referenceDate { get; set; }
-        public DateTime? lastChangeDateTime { get; set; }
+        public DateTimeOffset? referenceDate { get; set; }
+        public DateTimeOffset? lastChangeDateTime { get; set; }
         public BalanceAmount balanceAmount { get; set; }
     }
 

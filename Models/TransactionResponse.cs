@@ -34,11 +34,14 @@ namespace Exthand.GatewayClient.Models
         public string counterpartBic { get; set; }
         public string currency { get; set; }
         public string description { get; set; }
-        public DateTime? executionDate { get; set; }
-        public DateTime? valueDate { get; set; }
+
+        public DateTimeOffset? executionDate { get; set; }
+        public DateTimeOffset? valueDate { get; set; }
+        public bool possibleHole { get; set; }
+
         public TransactionRemittanceInformation remittanceInformation { get; set; }
         public TransactionBankTransactionCode bankTransactionCode { get; set; }
-
+        
         public string gwAccountId { get; set; }
         public string gwSequence { get; set; }
         public long gwSequenceNumber { get

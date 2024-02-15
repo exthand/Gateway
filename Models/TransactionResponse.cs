@@ -54,6 +54,12 @@ namespace Exthand.GatewayClient.Models
                 }
             }
         }
+
+        /// <summary>
+        /// If true, means the transaction is a SUM of a batch of transactions, provided by the bank.
+        /// </summary>
+        public bool? globalization { get; set; }
+
     }
 
     public class TransactionRemittanceInformation

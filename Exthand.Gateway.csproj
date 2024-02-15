@@ -11,7 +11,7 @@
     <PackageProjectUrl>https:://www.exthand.com</PackageProjectUrl>
     <PackageIcon>exthandPicto_FB.png</PackageIcon>
     <PackageIconUrl />
-    <RepositoryUrl>https://github.com/exthand/Exthand.Gateway</RepositoryUrl>
+    <RepositoryUrl>https://github.com/exthand/Gateway</RepositoryUrl>
     <RepositoryType>GITHUB</RepositoryType>
     <PackageLicenseExpression>MIT OR Apache-2.0</PackageLicenseExpression>
     <Description>This library connects you to Exthand:Gateway SAAS. You can then easily initiate payment (PIS) or access bank accounts (AIS) of +1300 open banking APIs worldwide.</Description>

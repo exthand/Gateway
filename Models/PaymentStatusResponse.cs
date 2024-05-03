@@ -9,7 +9,7 @@ namespace Exthand.GatewayClient.Models
 
     public class PaymentStatusResponse
     {
-
+        public ResultStatus resultStatus { get; set; }
         public PaymentStatus paymentStatus { get; set; }
         public string userContext { get; set; }
         public string flowContext { get; set; }

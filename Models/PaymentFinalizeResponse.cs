@@ -13,14 +13,17 @@ namespace Exthand.GatewayClient.Models
         public Dictionary<string, string> options { get; set; }
         public string flowContext { get; set; }
         public string userContext { get; set; }
-
+        public string paymentId {get;set;}
         public PaymentStatus paymentStatus { get; set; }
-
+        public int statusInfo { get; set; }
         public string rawResponse { get; set; }
     }
+
+
     public class PaymentStatus
     {
         public string paymentId { get; set; }
+        public string debtorName { get; set; }
         public BankingAccount debtor { get; set; }
         public string creditorName { get; set; }
         public BankingAccount creditor { get; set; }
@@ -28,6 +31,7 @@ namespace Exthand.GatewayClient.Models
         public PaymentStatusISO20022 status { get; set; }
         public string statusCodeRaw { get; set; }
         public string endToEndIdentification { get; set; }
+        public TransactionRemittanceInformation RemittanceInformation { get; set; }
     }
 
     public class BankingAccount

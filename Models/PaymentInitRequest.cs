@@ -12,6 +12,7 @@ namespace Exthand.GatewayClient.Models
         public int connectorId { get; set; }
         public BankSettings bankSettings { get; set; } = null;
         public string userContext { get; set; }
+        public string flow { get; set; }
         public PaymentInitiationRequest paymentInitiationRequest { get; set; } = new PaymentInitiationRequest();
         public TppContext tppContext { get; set; } = new TppContext();
     }

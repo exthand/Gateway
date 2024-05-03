@@ -162,6 +162,72 @@ namespace Exthand.GatewayClient
             throw new Exception(result.StatusCode + " " + result.ReasonPhrase + " " + await result.Content.ReadAsStringAsync());
         }
 
+        public async Task<BulkPaymentInitResponse> BulkPaymentInitiateAsync(BulkPaymentInitRequest bulkPaymentInitRequest)
+        {
+            var client = _httpClientFactory.CreateClient("BankingSdkGatewayClient");
+
+            var stringContent = new StringContent(JsonConvert.SerializeObject(bulkPaymentInitRequest), Encoding.UTF8, "application/json");
+
+            var result = await client.PostAsync("ob/pis/payments/bulk", stringContent);
+
+            if (result.IsSuccessStatusCode)
+            {
+                return JsonConvert.DeserializeObject<BulkPaymentInitResponse>(await result.Content.ReadAsStringAsync(), new JsonSerializerSettings
+                {
+                    ObjectCreationHandling = ObjectCreationHandling.Replace
+                });
+            }
+            else if (result.StatusCode == HttpStatusCode.BadRequest)
+            {
+                throw new GatewayException(await GetGWError(result));
+            }
+            throw new Exception(result.StatusCode + " " + result.ReasonPhrase + " " + await result.Content.ReadAsStringAsync());
+        }
+
+        public async Task<BulkPaymentFinalizeResponse> BulkPaymentFinalizeAsync(BulkPaymentFinalizeRequest bulkPaymentFinalizeRequest)
+        {
+            var client = _httpClientFactory.CreateClient("BankingSdkGatewayClient");
+
+            var stringContent = new StringContent(JsonConvert.SerializeObject(bulkPaymentFinalizeRequest), Encoding.UTF8, "application/json");
+
+            var result = await client.PutAsync("ob/pis/payments/bulk", stringContent);
+
+            if (result.IsSuccessStatusCode)
+            {
+                return JsonConvert.DeserializeObject<BulkPaymentFinalizeResponse>(await result.Content.ReadAsStringAsync(), new JsonSerializerSettings
+                {
+                    ObjectCreationHandling = ObjectCreationHandling.Replace
+                });
+            }
+            else if (result.StatusCode == HttpStatusCode.BadRequest)
+            {
+                throw new GatewayException(await GetGWError(result));
+            }
+            throw new Exception(result.StatusCode + " " + result.ReasonPhrase + " " + await result.Content.ReadAsStringAsync());
+        }
+
+        public async Task<BulkPaymentStatusResponse> BulkPaymentStatusAsync(BulkPaymentStatusRequest bulkPaymentStatusRequest)
+        {
+
+            var client = _httpClientFactory.CreateClient("BankingSdkGatewayClient");
+
+            var stringContent = new StringContent(JsonConvert.SerializeObject(bulkPaymentStatusRequest), Encoding.UTF8, "application/json");
+
+            var result = await client.PostAsync("ob/pis/payments/bulk/status", stringContent);
+
+            if (result.IsSuccessStatusCode)
+            {
+                return JsonConvert.DeserializeObject<BulkPaymentStatusResponse>(await result.Content.ReadAsStringAsync(), new JsonSerializerSettings
+                {
+                    ObjectCreationHandling = ObjectCreationHandling.Replace
+                });
+            }
+            else if (result.StatusCode == HttpStatusCode.BadRequest)
+            {
+                throw new GatewayException(await GetGWError(result));
+            }
+            throw new Exception(result.StatusCode + " " + result.ReasonPhrase + " " + await result.Content.ReadAsStringAsync());
+        }
 
         /// <summary>
         /// Initiates the process of getting a consent for bank accounts. 

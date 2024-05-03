@@ -7,9 +7,12 @@ using System.Threading.Tasks;
 namespace Exthand.GatewayClient.Models
 {
 
-    public class PaymentInitResponse
+    public class BulkPaymentInitResponse
     {
         public ResultStatus resultStatus { get; set; }
+
+        public int statusInfo { get; set; }
+
         public string dataString { get; set; }
         public Dictionary<string, string> options { get; set; }
         public string flowContext { get; set; }

@@ -8,7 +8,7 @@ namespace Exthand.GatewayClient.Models
 {
     public class BankAccessOption
     {
-
+        public int transactionsSavingDateField { get; set; }
         public int accessOption { get; set; }
         public int currencyOption { get; set; }
         public int linkingOption { get; set; }

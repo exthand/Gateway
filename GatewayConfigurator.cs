@@ -12,7 +12,6 @@ namespace Exthand.GatewayClient
             {
                 c.BaseAddress = serverUrl;
                 c.Timeout = TimeSpan.FromMilliseconds(httpClientTimeoutMilliseconds);
-
             });
             services.AddScoped<IGatewayService, GatewayService>();
         }

@@ -1,5 +1,5 @@
 ﻿using System;
-namespace Exthand.Gateway
+namespace Exthand.GatewayClient
 {
 	public static class BalanceType
 	{

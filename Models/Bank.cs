@@ -23,6 +23,14 @@ namespace Exthand.GatewayClient.Models
     }
 
 
+    public class BankList: IBase
+    {
+        public IEnumerable<Bank> Banks { get; set; }    
+        public string XRequestID { get; set; }
+        public string XCorrelationID { get; set; }
+        public string XOperationID { get; set; }
+    }
+    
     public class Bank
     {
 

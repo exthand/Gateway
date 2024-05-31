@@ -7,12 +7,15 @@ using System.Threading.Tasks;
 
 namespace Exthand.GatewayClient.Models
 {
-    public class BalanceResponse
+    public class BalanceResponse: IBase
     {
 
         public IEnumerable<Balance> balances { get; set; }
         public string userContext { get; set; }
 
+        public string XRequestID { get; set; }
+        public string XCorrelationID { get; set; }
+        public string XOperationID { get; set; }
     }
 
 

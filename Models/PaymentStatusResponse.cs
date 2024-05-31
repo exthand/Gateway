@@ -7,7 +7,7 @@ namespace Exthand.GatewayClient.Models
 {
 
 
-    public class PaymentStatusResponse
+    public class PaymentStatusResponse:IBase
     {
         public ResultStatus resultStatus { get; set; }
         public PaymentStatus paymentStatus { get; set; }
@@ -15,6 +15,9 @@ namespace Exthand.GatewayClient.Models
         public string flowContext { get; set; }
         public string rawResponse { get; set; }
 
+        public string XRequestID { get; set; }
+        public string XCorrelationID { get; set; }
+        public string XOperationID { get; set; }
     }
 
 }

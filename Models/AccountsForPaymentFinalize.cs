@@ -7,9 +7,12 @@ using Newtonsoft.Json;
 
 namespace Exthand.GatewayClient.Models
 {
-    public class AccountsForPaymentFinalize
+    public class AccountsForPaymentFinalize: IBase
     {
         public AccountsForPayment AccountsForPayment { get; set; }
+        public string XRequestID { get; set; }
+        public string XCorrelationID { get; set; }
+        public string XOperationID { get; set; }
     }
 
     public class AccountsForPayment

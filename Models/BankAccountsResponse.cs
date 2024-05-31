@@ -13,11 +13,14 @@ namespace Exthand.GatewayClient.Models
         INVALID_GRANT = 100
     }
 
-    public class BankAccountsResponse
+    public class BankAccountsResponse:IBase
     {
         public string userContext { get; set; }
         public BankAccountResponse[] accounts {get;set;}
 
+        public string XRequestID { get; set; }
+        public string XCorrelationID { get; set; }
+        public string XOperationID { get; set; }
     }
 
     /// <summary>

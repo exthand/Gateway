@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Exthand.GatewayClient.Models
 {
-    public class TransactionResponse
+    public class TransactionResponse: IBase
     {
         public IEnumerable<Transaction> transactions { get; set; }
         public string userContext { get; set; }
@@ -21,6 +21,10 @@ namespace Exthand.GatewayClient.Models
         /// True indicates that the consent to retrieve banking transactions or balances has been lost or expired. Renew the consent through an SCA process with your end user.
         /// </summary>
         public bool isConsentLost { get; set; } = false;
+
+        public string XRequestID { get; set; }
+        public string XCorrelationID { get; set; }
+        public string XOperationID { get; set; }
     }
 
 

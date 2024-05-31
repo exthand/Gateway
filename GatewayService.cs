@@ -11,6 +11,7 @@ using System.Web;
 using System.Threading.Tasks;
 using Exthand.GatewayClient.Exceptions;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Exthand.GatewayClient
@@ -24,6 +25,46 @@ namespace Exthand.GatewayClient
             _httpClientFactory = httpClientFactory;
         }
 
+
+        /// <summary>
+        /// Sets the XRequestID value if provided.
+        /// </summary>
+        /// <param name="httpClient"></param>
+        /// <param name="headerContent"></param>
+        /// <returns></returns>
+        private HttpClient SetHeaders(HttpClient httpClient, string? headerContent = null)
+        {
+            if (headerContent is not null)
+            {
+                httpClient.DefaultRequestHeaders.Add("X-Request-ID", headerContent);
+            }
+            return httpClient;
+        }
+
+        /// <summary>
+        /// Sends back a BASE object with XRequestID, XCorrelationID and XOperationID values from answer's Headers set.
+        /// </summary>
+        /// <param name="baseClass"></param>
+        /// <param name="responseMessage"></param>
+        /// <returns></returns>
+        private IBase GetHeaders(IBase baseClass, HttpResponseMessage responseMessage)
+        {
+            if (responseMessage.Headers.Contains(("X-Request-ID")))
+            {
+                baseClass.XRequestID = responseMessage.Headers.GetValues("X-Request-ID").First();
+            }
+            if (responseMessage.Headers.Contains(("X-Correlation-ID")))
+            {
+                baseClass.XCorrelationID = responseMessage.Headers.GetValues("X-Correlation-ID").First();
+            }
+            if (responseMessage.Headers.Contains(("X-Operation-ID")))
+            {
+                baseClass.XOperationID = responseMessage.Headers.GetValues("X-Operation-ID").First();
+            }
+            return baseClass;
+        }
+        
+        
         #region UTILITIES
 
         /// <summary>
@@ -31,18 +72,21 @@ namespace Exthand.GatewayClient
         /// </summary>
         /// <param name="countryCode">ISO-2 of the country ("BE", "FR, etc)</param>
         /// <returns>A list of Bank objects.</returns>
-        public async Task<IEnumerable<Bank>> GetBanksAsync(string countryCode="")
+        public async Task<BankList> GetBanksAsync(string countryCode="", string? XRequestID=null)
         {
-
             var client = _httpClientFactory.CreateClient("BankingSdkGatewayClient");
+            client = SetHeaders(client, XRequestID);
             var result = await client.GetAsync("ob/banks?countryCode=" + countryCode);
 
             if (result.IsSuccessStatusCode)
             {
-                return JsonConvert.DeserializeObject<IEnumerable<Bank>>(await result.Content.ReadAsStringAsync(), new JsonSerializerSettings
+                BankList bankList = new();
+                bankList.Banks = JsonConvert.DeserializeObject<IEnumerable<Bank>>(await result.Content.ReadAsStringAsync(), new JsonSerializerSettings
                 {
                     ObjectCreationHandling = ObjectCreationHandling.Replace
                 });
+                return (BankList) GetHeaders(bankList, result);
+
             }
             else if (result.StatusCode == HttpStatusCode.BadRequest)
             {
@@ -53,16 +97,18 @@ namespace Exthand.GatewayClient
         }
 
 
-        public async Task<string> FindFlowIdAsync(string queryString)
+        public async Task<GatewayString> FindFlowIdAsync(string queryString, string? XRequestID=null)
         {
-
-
             var client = _httpClientFactory.CreateClient("BankingSdkGatewayClient");
+            client = SetHeaders(client, XRequestID);
+            
             var result = await client.GetAsync("ob/findFlowId?queryString=" + HttpUtility.UrlEncode(queryString));
 
             if (result.IsSuccessStatusCode)
-            {
-                return await result.Content.ReadAsStringAsync();
+            { 
+                GatewayString gatewayString = new GatewayString();
+                gatewayString.Content=await result.Content.ReadAsStringAsync();
+                return (GatewayString) GetHeaders(gatewayString, result);
             }
             else if (result.StatusCode == HttpStatusCode.BadRequest)
             {
@@ -75,18 +121,21 @@ namespace Exthand.GatewayClient
 
         #region PIS
 
-        public async Task<BankPaymentAccessOption> GetBankPaymentAccessOptionsAsync(int connectorId)
+        public async Task<BankPaymentAccessOption> GetBankPaymentAccessOptionsAsync(int connectorId, string? XRequestID=null)
         {
 
             var client = _httpClientFactory.CreateClient("BankingSdkGatewayClient");
+            client = SetHeaders(client, XRequestID);
+            
             var result = await client.GetAsync("ob/pis/payments/options/" + connectorId.ToString());
 
             if (result.IsSuccessStatusCode)
             {
-                return JsonConvert.DeserializeObject<BankPaymentAccessOption>(await result.Content.ReadAsStringAsync(), new JsonSerializerSettings
+                BankPaymentAccessOption bankPaymentAccessOption = JsonConvert.DeserializeObject<BankPaymentAccessOption>(await result.Content.ReadAsStringAsync(), new JsonSerializerSettings
                 {
                     ObjectCreationHandling = ObjectCreationHandling.Replace
                 });
+                return (BankPaymentAccessOption)GetHeaders(bankPaymentAccessOption,result);
             }
             else if (result.StatusCode == HttpStatusCode.BadRequest)
             {
@@ -95,20 +144,24 @@ namespace Exthand.GatewayClient
             throw new Exception(result.StatusCode + " " + result.ReasonPhrase + " " + await result.Content.ReadAsStringAsync());
         }
 
-        public async Task<PaymentInitResponse> PaymentInitiateAsync(PaymentInitRequest paymentInitRequest)
+        public async Task<PaymentInitResponse> PaymentInitiateAsync(PaymentInitRequest paymentInitRequest, string? XRequestID=null)
         {
             var client = _httpClientFactory.CreateClient("BankingSdkGatewayClient");
-
+            client = SetHeaders(client, XRequestID);
+            
             var stringContent = new StringContent(JsonConvert.SerializeObject(paymentInitRequest), Encoding.UTF8, "application/json");
 
             var result = await client.PostAsync("ob/pis/payments", stringContent);
 
             if (result.IsSuccessStatusCode)
             {
-                return JsonConvert.DeserializeObject<PaymentInitResponse>(await result.Content.ReadAsStringAsync(), new JsonSerializerSettings
+                
+                PaymentInitResponse paymentInitResponse =  JsonConvert.DeserializeObject<PaymentInitResponse>(await result.Content.ReadAsStringAsync(), new JsonSerializerSettings
                 {
                     ObjectCreationHandling = ObjectCreationHandling.Replace
                 });
+
+                return (PaymentInitResponse)GetHeaders(paymentInitResponse, result);
             }
             else if (result.StatusCode == HttpStatusCode.BadRequest)
             {
@@ -117,20 +170,22 @@ namespace Exthand.GatewayClient
             throw new Exception(result.StatusCode + " " + result.ReasonPhrase + " " + await result.Content.ReadAsStringAsync());
         }
 
-        public async Task<PaymentFinalizeResponse> PaymentFinalizeAsync(PaymentFinalizeRequest paymentFinalizeRequest)
+        public async Task<PaymentFinalizeResponse> PaymentFinalizeAsync(PaymentFinalizeRequest paymentFinalizeRequest, string? XRequestID=null)
         {
             var client = _httpClientFactory.CreateClient("BankingSdkGatewayClient");
-
+            client = SetHeaders(client, XRequestID);
+            
             var stringContent = new StringContent(JsonConvert.SerializeObject(paymentFinalizeRequest), Encoding.UTF8, "application/json");
 
             var result = await client.PutAsync("ob/pis/payments", stringContent);
 
             if (result.IsSuccessStatusCode)
             {
-                return JsonConvert.DeserializeObject<PaymentFinalizeResponse>(await result.Content.ReadAsStringAsync(), new JsonSerializerSettings
+                PaymentFinalizeResponse paymentFinalizeResponse= JsonConvert.DeserializeObject<PaymentFinalizeResponse>(await result.Content.ReadAsStringAsync(), new JsonSerializerSettings
                 {
                     ObjectCreationHandling = ObjectCreationHandling.Replace
                 });
+                return (PaymentFinalizeResponse)GetHeaders(paymentFinalizeResponse, result);
             }
             else if (result.StatusCode == HttpStatusCode.BadRequest)
             {
@@ -139,21 +194,23 @@ namespace Exthand.GatewayClient
             throw new Exception(result.StatusCode + " " + result.ReasonPhrase + " " + await result.Content.ReadAsStringAsync());
         }
 
-        public async Task<PaymentStatusResponse> PaymentStatusAsync(PaymentStatusRequest paymentStatusRequest)
+        public async Task<PaymentStatusResponse> PaymentStatusAsync(PaymentStatusRequest paymentStatusRequest, string? XRequestID=null)
         {
 
             var client = _httpClientFactory.CreateClient("BankingSdkGatewayClient");
-
+            client = SetHeaders(client, XRequestID);
+            
             var stringContent = new StringContent(JsonConvert.SerializeObject(paymentStatusRequest), Encoding.UTF8, "application/json");
 
             var result = await client.PostAsync("ob/pis/payments/status", stringContent);
 
             if (result.IsSuccessStatusCode)
             {
-                return JsonConvert.DeserializeObject<PaymentStatusResponse>(await result.Content.ReadAsStringAsync(), new JsonSerializerSettings
+                PaymentStatusResponse paymentStatusResponse= JsonConvert.DeserializeObject<PaymentStatusResponse>(await result.Content.ReadAsStringAsync(), new JsonSerializerSettings
                 {
                     ObjectCreationHandling = ObjectCreationHandling.Replace
                 });
+                return (PaymentStatusResponse)GetHeaders(paymentStatusResponse, result);
             }
             else if (result.StatusCode == HttpStatusCode.BadRequest)
             {
@@ -162,20 +219,22 @@ namespace Exthand.GatewayClient
             throw new Exception(result.StatusCode + " " + result.ReasonPhrase + " " + await result.Content.ReadAsStringAsync());
         }
 
-        public async Task<BulkPaymentInitResponse> BulkPaymentInitiateAsync(BulkPaymentInitRequest bulkPaymentInitRequest)
+        public async Task<BulkPaymentInitResponse> BulkPaymentInitiateAsync(BulkPaymentInitRequest bulkPaymentInitRequest, string? XRequestID=null)
         {
             var client = _httpClientFactory.CreateClient("BankingSdkGatewayClient");
-
+            client = SetHeaders(client, XRequestID);
+            
             var stringContent = new StringContent(JsonConvert.SerializeObject(bulkPaymentInitRequest), Encoding.UTF8, "application/json");
 
             var result = await client.PostAsync("ob/pis/payments/bulk", stringContent);
 
             if (result.IsSuccessStatusCode)
             {
-                return JsonConvert.DeserializeObject<BulkPaymentInitResponse>(await result.Content.ReadAsStringAsync(), new JsonSerializerSettings
+                BulkPaymentInitResponse bulkPaymentInitResponse= JsonConvert.DeserializeObject<BulkPaymentInitResponse>(await result.Content.ReadAsStringAsync(), new JsonSerializerSettings
                 {
                     ObjectCreationHandling = ObjectCreationHandling.Replace
                 });
+                return (BulkPaymentInitResponse)GetHeaders(bulkPaymentInitResponse, result);
             }
             else if (result.StatusCode == HttpStatusCode.BadRequest)
             {
@@ -184,20 +243,22 @@ namespace Exthand.GatewayClient
             throw new Exception(result.StatusCode + " " + result.ReasonPhrase + " " + await result.Content.ReadAsStringAsync());
         }
 
-        public async Task<BulkPaymentFinalizeResponse> BulkPaymentFinalizeAsync(BulkPaymentFinalizeRequest bulkPaymentFinalizeRequest)
+        public async Task<BulkPaymentFinalizeResponse> BulkPaymentFinalizeAsync(BulkPaymentFinalizeRequest bulkPaymentFinalizeRequest, string? XRequestID=null)
         {
             var client = _httpClientFactory.CreateClient("BankingSdkGatewayClient");
-
+            client = SetHeaders(client, XRequestID);
+            
             var stringContent = new StringContent(JsonConvert.SerializeObject(bulkPaymentFinalizeRequest), Encoding.UTF8, "application/json");
 
             var result = await client.PutAsync("ob/pis/payments/bulk", stringContent);
 
             if (result.IsSuccessStatusCode)
             {
-                return JsonConvert.DeserializeObject<BulkPaymentFinalizeResponse>(await result.Content.ReadAsStringAsync(), new JsonSerializerSettings
+                BulkPaymentFinalizeResponse bulkPaymentFinalizeResponse= JsonConvert.DeserializeObject<BulkPaymentFinalizeResponse>(await result.Content.ReadAsStringAsync(), new JsonSerializerSettings
                 {
                     ObjectCreationHandling = ObjectCreationHandling.Replace
                 });
+                return (BulkPaymentFinalizeResponse)GetHeaders(bulkPaymentFinalizeResponse, result);
             }
             else if (result.StatusCode == HttpStatusCode.BadRequest)
             {
@@ -206,21 +267,23 @@ namespace Exthand.GatewayClient
             throw new Exception(result.StatusCode + " " + result.ReasonPhrase + " " + await result.Content.ReadAsStringAsync());
         }
 
-        public async Task<BulkPaymentStatusResponse> BulkPaymentStatusAsync(BulkPaymentStatusRequest bulkPaymentStatusRequest)
+        public async Task<BulkPaymentStatusResponse> BulkPaymentStatusAsync(BulkPaymentStatusRequest bulkPaymentStatusRequest, string? XRequestID=null)
         {
 
             var client = _httpClientFactory.CreateClient("BankingSdkGatewayClient");
-
+            client = SetHeaders(client, XRequestID);
+            
             var stringContent = new StringContent(JsonConvert.SerializeObject(bulkPaymentStatusRequest), Encoding.UTF8, "application/json");
 
             var result = await client.PostAsync("ob/pis/payments/bulk/status", stringContent);
 
             if (result.IsSuccessStatusCode)
             {
-                return JsonConvert.DeserializeObject<BulkPaymentStatusResponse>(await result.Content.ReadAsStringAsync(), new JsonSerializerSettings
+                BulkPaymentStatusResponse bulkPaymentStatusResponse= JsonConvert.DeserializeObject<BulkPaymentStatusResponse>(await result.Content.ReadAsStringAsync(), new JsonSerializerSettings
                 {
                     ObjectCreationHandling = ObjectCreationHandling.Replace
                 });
+                return (BulkPaymentStatusResponse)GetHeaders(bulkPaymentStatusResponse, result);
             }
             else if (result.StatusCode == HttpStatusCode.BadRequest)
             {
@@ -234,20 +297,23 @@ namespace Exthand.GatewayClient
         /// </summary>
         /// <param name="bankAccessRequest"></param>
         /// <returns></returns>
-        public async Task<PaymentFinalizeResponse> GetAccountsForPaymentsInitAsync(AccountsForPaymentRequestInit accountsForPaymentRequestInit)
+        public async Task<AccountsForPaymentResponseInit> GetAccountsForPaymentsInitAsync(AccountsForPaymentRequestInit accountsForPaymentRequestInit, string? XRequestID=null)
         {
+           
             var client = _httpClientFactory.CreateClient("BankingSdkGatewayClient");
-
+            client = SetHeaders(client, XRequestID);
+            
             var stringContent = new StringContent(JsonConvert.SerializeObject(accountsForPaymentRequestInit), Encoding.UTF8, "application/json");
 
             var result = await client.PostAsync("ob/pis/accounts", stringContent);
 
             if (result.IsSuccessStatusCode)
             {
-                return JsonConvert.DeserializeObject<PaymentFinalizeResponse>(await result.Content.ReadAsStringAsync(), new JsonSerializerSettings
+                AccountsForPaymentResponseInit accountsForPaymentResponseInit =  JsonConvert.DeserializeObject<AccountsForPaymentResponseInit>(await result.Content.ReadAsStringAsync(), new JsonSerializerSettings
                 {
                     ObjectCreationHandling = ObjectCreationHandling.Replace
                 });
+                return (AccountsForPaymentResponseInit)GetHeaders(accountsForPaymentResponseInit, result);
             }
             else if (result.StatusCode == HttpStatusCode.BadRequest)
             {
@@ -261,20 +327,22 @@ namespace Exthand.GatewayClient
         /// </summary>
         /// <param name="bankAccessRequestFinalize"></param>
         /// <returns></returns>
-        public async Task<AccountsForPaymentFinalize> GetAccountsForPaymentsFinalizeAsync(AccountsForPaymentFinalizeRequest accountsForPaymentFinalizeRequest)
+        public async Task<AccountsForPaymentFinalize> GetAccountsForPaymentsFinalizeAsync(AccountsForPaymentFinalizeRequest accountsForPaymentFinalizeRequest, string? XRequestID=null)
         {
             var client = _httpClientFactory.CreateClient("BankingSdkGatewayClient");
-
+            client = SetHeaders(client, XRequestID);
+            
             var stringContent = new StringContent(JsonConvert.SerializeObject(accountsForPaymentFinalizeRequest), Encoding.UTF8, "application/json");
 
             var result = await client.PutAsync("ob/pis/accounts", stringContent);
 
             if (result.IsSuccessStatusCode)
             {
-                return JsonConvert.DeserializeObject<AccountsForPaymentFinalize>(await result.Content.ReadAsStringAsync(), new JsonSerializerSettings
+                AccountsForPaymentFinalize accountsForPaymentFinalize= JsonConvert.DeserializeObject<AccountsForPaymentFinalize>(await result.Content.ReadAsStringAsync(), new JsonSerializerSettings
                 {
                     ObjectCreationHandling = ObjectCreationHandling.Replace
                 });
+                return (AccountsForPaymentFinalize)GetHeaders(accountsForPaymentFinalize, result);
             }
             else if (result.StatusCode == HttpStatusCode.BadRequest)
             {
@@ -291,20 +359,28 @@ namespace Exthand.GatewayClient
         /// Returns the Bank access options for a given connector.
         /// </summary>
         /// <param name="connectorId"></param>
+        /// <param name="XRequestID"></param>
         /// <returns></returns>
         /// <exception cref="GatewayException"></exception>
         /// <exception cref="Exception"></exception>
-        public async Task<BankAccessOption> GetBankAccessOptionsAsync(int connectorId)
+        public async Task<BankAccessOption> GetBankAccessOptionsAsync(int connectorId, string? XRequestID=null)
         {
             var client = _httpClientFactory.CreateClient("BankingSdkGatewayClient");
+            
+            client = SetHeaders(client, XRequestID);
+            
             var result = await client.GetAsync("ob/ais/access/options/" + connectorId.ToString());
 
             if (result.IsSuccessStatusCode)
             {
-                return JsonConvert.DeserializeObject<BankAccessOption>(await result.Content.ReadAsStringAsync(), new JsonSerializerSettings
+                
+                BankAccessOption bankAccessOption =JsonConvert.DeserializeObject<BankAccessOption>(await result.Content.ReadAsStringAsync(), new JsonSerializerSettings
                 {
                     ObjectCreationHandling = ObjectCreationHandling.Replace
                 });
+                
+                return (BankAccessOption) GetHeaders((IBase)bankAccessOption, result);
+
             }
             else if (result.StatusCode == HttpStatusCode.BadRequest)
             {
@@ -318,20 +394,22 @@ namespace Exthand.GatewayClient
         /// </summary>
         /// <param name="bankAccessRequest"></param>
         /// <returns></returns>
-        public async Task<BankAccessResponse> RequestBankAccessAsync(BankAccessRequest bankAccessRequest)
+        public async Task<BankAccessResponse> RequestBankAccessAsync(BankAccessRequest bankAccessRequest, string? XRequestID=null)
         {
             var client = _httpClientFactory.CreateClient("BankingSdkGatewayClient");
-
+            client = SetHeaders(client, XRequestID);
+            
             var stringContent = new StringContent(JsonConvert.SerializeObject(bankAccessRequest), Encoding.UTF8, "application/json");
 
             var result = await client.PostAsync("ob/ais/access", stringContent);
 
             if (result.IsSuccessStatusCode)
             {
-                return JsonConvert.DeserializeObject<BankAccessResponse>(await result.Content.ReadAsStringAsync(), new JsonSerializerSettings
+                BankAccessResponse bankAccessResponse= JsonConvert.DeserializeObject<BankAccessResponse>(await result.Content.ReadAsStringAsync(), new JsonSerializerSettings
                 {
                     ObjectCreationHandling = ObjectCreationHandling.Replace
                 });
+                return (BankAccessResponse)GetHeaders(bankAccessResponse, result);
             }
             else if (result.StatusCode == HttpStatusCode.BadRequest)
             {
@@ -345,20 +423,22 @@ namespace Exthand.GatewayClient
         /// </summary>
         /// <param name="bankAccessRequestFinalize"></param>
         /// <returns></returns>
-        public async Task<BankAccessResponseFinalize> FinalizeRequestBankAccessAsync(BankAccessRequestFinalize bankAccessRequestFinalize)
+        public async Task<BankAccessResponseFinalize> FinalizeRequestBankAccessAsync(BankAccessRequestFinalize bankAccessRequestFinalize, string? XRequestID=null)
         {
             var client = _httpClientFactory.CreateClient("BankingSdkGatewayClient");
-
+            client = SetHeaders(client, XRequestID);
+            
             var stringContent = new StringContent(JsonConvert.SerializeObject(bankAccessRequestFinalize), Encoding.UTF8, "application/json");
 
             var result = await client.PutAsync("ob/ais/access", stringContent);
 
             if (result.IsSuccessStatusCode)
             {
-                return JsonConvert.DeserializeObject<BankAccessResponseFinalize>(await result.Content.ReadAsStringAsync(), new JsonSerializerSettings
+                BankAccessResponseFinalize bankAccessResponseFinalize= JsonConvert.DeserializeObject<BankAccessResponseFinalize>(await result.Content.ReadAsStringAsync(), new JsonSerializerSettings
                 {
                     ObjectCreationHandling = ObjectCreationHandling.Replace
                 });
+                return (BankAccessResponseFinalize)GetHeaders(bankAccessResponseFinalize, result);
             }
             else if (result.StatusCode == HttpStatusCode.BadRequest)
             {
@@ -372,17 +452,20 @@ namespace Exthand.GatewayClient
         /// </summary>
         /// <param name="DeleteConsentRequest"></param>
         /// <returns>DeleteRequestResponse</returns>
-        public async Task<bool> CancelBankAccessAsync(DeleteConsentRequest deleteConsentRequest)
+        public async Task<GatewayBool> CancelBankAccessAsync(DeleteConsentRequest deleteConsentRequest, string? XRequestID=null)
         {
             var client = _httpClientFactory.CreateClient("BankingSdkGatewayClient");
-
+            client = SetHeaders(client, XRequestID);
+            
             var stringContent = new StringContent(JsonConvert.SerializeObject(deleteConsentRequest), Encoding.UTF8, "application/json");
 
             var result = await client.PutAsync("ob/ais/consents/delete", stringContent);
 
             if (result.IsSuccessStatusCode)
             {
-                return true;
+                GatewayBool gatewayBool = new GatewayBool();
+                gatewayBool.value = true;
+                return (GatewayBool)GetHeaders(gatewayBool, result);
             }
             else if (result.StatusCode == HttpStatusCode.BadRequest)
             {
@@ -396,17 +479,20 @@ namespace Exthand.GatewayClient
         /// </summary>
         /// <param name="DeleteAccountRequest"></param>
         /// <returns>DeleteAccountResponse</returns>
-        public async Task<bool> RemoveBankAccountAsync(DeleteAccountRequest deleteAccountRequest)
+        public async Task<GatewayBool> RemoveBankAccountAsync(DeleteAccountRequest deleteAccountRequest, string? XRequestID=null)
         {
             var client = _httpClientFactory.CreateClient("BankingSdkGatewayClient");
-
+            client = SetHeaders(client, XRequestID);
+            
             var stringContent = new StringContent(JsonConvert.SerializeObject(deleteAccountRequest), Encoding.UTF8, "application/json");
 
             var result = await client.PutAsync("ob/ais/accounts/delete", stringContent);
 
             if (result.IsSuccessStatusCode)
             {
-                return true;
+                GatewayBool gatewayBool = new GatewayBool();
+                gatewayBool.value = true;
+                return (GatewayBool)GetHeaders(gatewayBool, result);
             }
             else if (result.StatusCode == HttpStatusCode.BadRequest)
             {
@@ -415,21 +501,23 @@ namespace Exthand.GatewayClient
             throw new Exception(result.StatusCode + " " + result.ReasonPhrase + " " + await result.Content.ReadAsStringAsync());
         }
 
-        public async Task<BankAccountsResponse> GetBankAccountsAsync(BankAccountsRequest bankAccountsRequest)
+        public async Task<BankAccountsResponse> GetBankAccountsAsync(BankAccountsRequest bankAccountsRequest, string? XRequestID=null)
         {
 
             var client = _httpClientFactory.CreateClient("BankingSdkGatewayClient");
-
+            client = SetHeaders(client, XRequestID);
+            
             var stringContent = new StringContent(JsonConvert.SerializeObject(bankAccountsRequest), Encoding.UTF8, "application/json");
 
             var result = await client.PostAsync("ob/ais/accounts", stringContent);
 
             if (result.IsSuccessStatusCode)
             {
-                return JsonConvert.DeserializeObject<BankAccountsResponse>(await result.Content.ReadAsStringAsync(), new JsonSerializerSettings
+                BankAccountsResponse bankAccountsResponse = JsonConvert.DeserializeObject<BankAccountsResponse>(await result.Content.ReadAsStringAsync(), new JsonSerializerSettings
                 {
                     ObjectCreationHandling = ObjectCreationHandling.Replace
                 });
+                return (BankAccountsResponse)GetHeaders(bankAccountsResponse, result);
             }
             else if (result.StatusCode == HttpStatusCode.BadRequest)
             {
@@ -442,21 +530,23 @@ namespace Exthand.GatewayClient
 
         #region AIS-TRANSACTIONS
 
-        public async Task<BalanceResponse> GetBalancesAsync(string accountId, BalanceRequest balanceRequest)
+        public async Task<BalanceResponse> GetBalancesAsync(string accountId, BalanceRequest balanceRequest, string? XRequestID=null)
         {
 
             var client = _httpClientFactory.CreateClient("BankingSdkGatewayClient");
-
+            client = SetHeaders(client, XRequestID);
+            
             var stringContent = new StringContent(JsonConvert.SerializeObject(balanceRequest), Encoding.UTF8, "application/json");
 
             var result = await client.PostAsync($"ob/ais/accounts/{accountId}/balances", stringContent);
 
             if (result.IsSuccessStatusCode)
             {
-                return JsonConvert.DeserializeObject<BalanceResponse>(await result.Content.ReadAsStringAsync(), new JsonSerializerSettings
+                BalanceResponse balanceResponse = JsonConvert.DeserializeObject<BalanceResponse>(await result.Content.ReadAsStringAsync(), new JsonSerializerSettings
                 {
                     ObjectCreationHandling = ObjectCreationHandling.Replace
                 });
+                return (BalanceResponse)GetHeaders(balanceResponse, result);
             }
             else if (result.StatusCode == HttpStatusCode.BadRequest)
             {
@@ -465,10 +555,11 @@ namespace Exthand.GatewayClient
             throw new Exception(result.StatusCode + " " + result.ReasonPhrase + " " + await result.Content.ReadAsStringAsync());
         }
 
-        public async Task<TransactionResponse> GetTransactionsAsync(string accountId, TransactionRequest transactionRequest)
+        public async Task<TransactionResponse> GetTransactionsAsync(string accountId, TransactionRequest transactionRequest, string? XRequestID=null)
         {
             var client = _httpClientFactory.CreateClient("BankingSdkGatewayClient");
-
+            client = SetHeaders(client, XRequestID);
+            
             var stringContent = new StringContent(JsonConvert.SerializeObject(transactionRequest), Encoding.UTF8, "application/json");
 
             HttpResponseMessage result = await client.PostAsync($"ob/ais/accounts/{accountId}/transactions", stringContent);
@@ -481,7 +572,8 @@ namespace Exthand.GatewayClient
                 });
                 if (result.StatusCode == HttpStatusCode.PartialContent)
                     transactionResponse.isConsentLost = true;
-                return transactionResponse;
+
+                return (TransactionResponse)GetHeaders(transactionResponse, result);
             }
             else if (result.StatusCode == HttpStatusCode.BadRequest)
             {
@@ -490,10 +582,11 @@ namespace Exthand.GatewayClient
             throw new Exception(result.StatusCode + " " + result.ReasonPhrase + " " + await result.Content.ReadAsStringAsync());
         }
 
-        public async Task<TransactionResponse> GetTransactionsNextAsync(string accountId, TransactionPagingRequest transactionRequest)
+        public async Task<TransactionResponse> GetTransactionsNextAsync(string accountId, TransactionPagingRequest transactionRequest, string? XRequestID=null)
         {
             var client = _httpClientFactory.CreateClient("BankingSdkGatewayClient");
-
+            client = SetHeaders(client, XRequestID);
+            
             var stringContent = new StringContent(JsonConvert.SerializeObject(transactionRequest), Encoding.UTF8, "application/json");
 
             var result = await client.PostAsync($"ob/ais/accounts/{accountId}/transactions/next", stringContent);
@@ -506,7 +599,7 @@ namespace Exthand.GatewayClient
                 });
                 if (result.StatusCode == HttpStatusCode.PartialContent)
                     transactionResponse.isConsentLost = true;
-                return transactionResponse;
+                return (TransactionResponse)GetHeaders(transactionResponse, result);
             }
             else if (result.StatusCode == HttpStatusCode.BadRequest)
             {
@@ -523,17 +616,20 @@ namespace Exthand.GatewayClient
         /// Gets the content of the latest Terms & Conditions, Pricvacy Notice and their Version number.
         /// </summary>
         /// <returns>TermsDTO object</returns>
-        public async Task<TermsDTO> GetTCAsync(string language="")
+        public async Task<TermsDTO> GetTCAsync(string language="", string? XRequestID=null)
         {
             var client = _httpClientFactory.CreateClient("BankingSdkGatewayClient");
+            client = SetHeaders(client, XRequestID);
+            
             var result = await client.GetAsync("ob/gw/tc/latest?language=" + language);
 
             if (result.IsSuccessStatusCode)
             {
-                return JsonConvert.DeserializeObject<TermsDTO>(await result.Content.ReadAsStringAsync(), new JsonSerializerSettings
+                TermsDTO termsDto =  JsonConvert.DeserializeObject<TermsDTO>(await result.Content.ReadAsStringAsync(), new JsonSerializerSettings
                 {
                     ObjectCreationHandling = ObjectCreationHandling.Replace
                 });
+                return (TermsDTO)GetHeaders(termsDto, result);
             }
             else if (result.StatusCode == HttpStatusCode.BadRequest)
             {
@@ -548,7 +644,7 @@ namespace Exthand.GatewayClient
         /// </summary>
         /// <param name="psuId">Your internal id of the user (PSU)</param>
         /// <returns>TermsValidatedDTO object</returns>
-        public async Task<TermsValidated> GetTCLatestAsync(string psuId)
+        public async Task<TermsValidated> GetTCLatestAsync(string psuId, string? XRequestID=null)
         {
             TermsValidated termsValidatedDTO = new()
             {
@@ -560,14 +656,17 @@ namespace Exthand.GatewayClient
                 return termsValidatedDTO;
 
             var client = _httpClientFactory.CreateClient("BankingSdkGatewayClient");
+            client = SetHeaders(client, XRequestID);
+            
             var result = await client.GetAsync($"ob/gw/users/{psuId}/tc/latest" );
 
             if (result.IsSuccessStatusCode)
             {
-                return JsonConvert.DeserializeObject<TermsValidated>(await result.Content.ReadAsStringAsync(), new JsonSerializerSettings
+                TermsValidated termsValidated= JsonConvert.DeserializeObject<TermsValidated>(await result.Content.ReadAsStringAsync(), new JsonSerializerSettings
                 {
                     ObjectCreationHandling = ObjectCreationHandling.Replace
                 });
+                return (TermsValidated)GetHeaders(termsValidated, result);
             }
             else if (result.StatusCode == HttpStatusCode.BadRequest)
             {
@@ -582,19 +681,22 @@ namespace Exthand.GatewayClient
         /// </summary>
         /// <param name="userDTO">A userDTO object containes info needed for Extahd:Gateway being able to manage your user (PSU)</param>
         /// <returns>ResponseActionDTO object</returns>
-        public async Task<UserRegisterResponse> CreateUserAsync(UserDTO userDTO)
+        public async Task<UserRegisterResponse> CreateUserAsync(UserDTO userDTO, string? XRequestID=null)
         {
 
             var client = _httpClientFactory.CreateClient("BankingSdkGatewayClient");
+            client = SetHeaders(client, XRequestID);
+            
             var stringContent = new StringContent(JsonConvert.SerializeObject(userDTO), Encoding.UTF8, "application/json");
             var result = await client.PostAsync("ob/gw/users", stringContent);
 
             if (result.IsSuccessStatusCode)
             {
-                return JsonConvert.DeserializeObject<UserRegisterResponse>(await result.Content.ReadAsStringAsync(), new JsonSerializerSettings
+                UserRegisterResponse userRegisterResponse= JsonConvert.DeserializeObject<UserRegisterResponse>(await result.Content.ReadAsStringAsync(), new JsonSerializerSettings
                 {
                     ObjectCreationHandling = ObjectCreationHandling.Replace
                 });
+                return (UserRegisterResponse)GetHeaders(userRegisterResponse, result);
             }
             else if (result.StatusCode == HttpStatusCode.BadRequest)
             {

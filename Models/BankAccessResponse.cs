@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Exthand.GatewayClient.Models
 {
-    public class BankAccessResponse
+    public class BankAccessResponse:IBase
     {
 
         public int resultStatus { get; set; }
@@ -22,5 +22,8 @@ namespace Exthand.GatewayClient.Models
         public string rawResponse { get; set; }
 
 
+        public string XRequestID { get; set; }
+        public string XCorrelationID { get; set; }
+        public string XOperationID { get; set; }
     }
 }

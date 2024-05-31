@@ -12,7 +12,7 @@ namespace Exthand.GatewayClient.Models
         ALLOWED
     }
 
-    public class BankPaymentAccessOption
+    public class BankPaymentAccessOption : IBase
     {
         public PropertyConstrains BulksIdConstrains { get; set; } 
         public int MaxNumberOfBulk { get; set; } 
@@ -21,6 +21,9 @@ namespace Exthand.GatewayClient.Models
         public TransferOptions domesticTransfers { get; set; } = new();
         public TransferOptions crossborderSepaCreditTransfers { get; set; } = new ();
         public TransferOptions target2Payment { get; set; } = new ();
+        public string XRequestID { get; set; }
+        public string XCorrelationID { get; set; }
+        public string XOperationID { get; set; }
     }
 
     public class TransferOptions

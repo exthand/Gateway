@@ -6,7 +6,7 @@ using System.Text;
 namespace Exthand.GatewayClient.Models
 {
 
-    public class PaymentFinalizeResponse
+    public class PaymentFinalizeResponse: IBase
     {
         public ResultStatus resultStatus { get; set; }
         public string dataString { get; set; }
@@ -17,6 +17,9 @@ namespace Exthand.GatewayClient.Models
         public PaymentStatus paymentStatus { get; set; }
         public int statusInfo { get; set; }
         public string rawResponse { get; set; }
+        public string XRequestID { get; set; }
+        public string XCorrelationID { get; set; }
+        public string XOperationID { get; set; }
     }
 
 

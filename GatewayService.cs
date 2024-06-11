@@ -218,7 +218,69 @@ namespace Exthand.GatewayClient
             }
             throw new Exception(result.StatusCode + " " + result.ReasonPhrase + " " + await result.Content.ReadAsStringAsync());
         }
+                /// <summary>
+        /// Initiates the process of getting a consent for bank accounts. 
+        /// </summary>
+        /// <param name="bankAccessRequest"></param>
+        /// <returns></returns>
+        public async Task<AccountsForPaymentResponseInit> GetAccountsForPaymentsInitAsync(AccountsForPaymentRequestInit accountsForPaymentRequestInit, string? XRequestID=null)
+        {
+           
+            var client = _httpClientFactory.CreateClient("BankingSdkGatewayClient");
+            client = SetHeaders(client, XRequestID);
+            
+            var stringContent = new StringContent(JsonConvert.SerializeObject(accountsForPaymentRequestInit), Encoding.UTF8, "application/json");
 
+            var result = await client.PostAsync("ob/pis/accounts", stringContent);
+
+            if (result.IsSuccessStatusCode)
+            {
+                AccountsForPaymentResponseInit accountsForPaymentResponseInit =  JsonConvert.DeserializeObject<AccountsForPaymentResponseInit>(await result.Content.ReadAsStringAsync(), new JsonSerializerSettings
+                {
+                    ObjectCreationHandling = ObjectCreationHandling.Replace
+                });
+                return (AccountsForPaymentResponseInit)GetHeaders(accountsForPaymentResponseInit, result);
+            }
+            else if (result.StatusCode == HttpStatusCode.BadRequest)
+            {
+                throw new GatewayException(await GetGWError(result));
+            }
+            throw new Exception(result.StatusCode + " " + result.ReasonPhrase + " " + await result.Content.ReadAsStringAsync());
+        }
+
+        /// <summary>
+        /// Finalizes the request of consent. Must be called after the redirect from the bank.
+        /// </summary>
+        /// <param name="bankAccessRequestFinalize"></param>
+        /// <returns></returns>
+        public async Task<AccountsForPaymentFinalize> GetAccountsForPaymentsFinalizeAsync(AccountsForPaymentFinalizeRequest accountsForPaymentFinalizeRequest, string? XRequestID=null)
+        {
+            var client = _httpClientFactory.CreateClient("BankingSdkGatewayClient");
+            client = SetHeaders(client, XRequestID);
+            
+            var stringContent = new StringContent(JsonConvert.SerializeObject(accountsForPaymentFinalizeRequest), Encoding.UTF8, "application/json");
+
+            var result = await client.PutAsync("ob/pis/accounts", stringContent);
+
+            if (result.IsSuccessStatusCode)
+            {
+                AccountsForPaymentFinalize accountsForPaymentFinalize= JsonConvert.DeserializeObject<AccountsForPaymentFinalize>(await result.Content.ReadAsStringAsync(), new JsonSerializerSettings
+                {
+                    ObjectCreationHandling = ObjectCreationHandling.Replace
+                });
+                return (AccountsForPaymentFinalize)GetHeaders(accountsForPaymentFinalize, result);
+            }
+            else if (result.StatusCode == HttpStatusCode.BadRequest)
+            {
+                throw new GatewayException(await GetGWError(result));
+            }
+            throw new Exception(result.StatusCode + " " + result.ReasonPhrase + " " + await result.Content.ReadAsStringAsync());
+        }
+
+        #endregion
+
+        #region BULKPIS
+        
         public async Task<BulkPaymentInitResponse> BulkPaymentInitiateAsync(BulkPaymentInitRequest bulkPaymentInitRequest, string? XRequestID=null)
         {
             var client = _httpClientFactory.CreateClient("BankingSdkGatewayClient");
@@ -291,66 +353,6 @@ namespace Exthand.GatewayClient
             }
             throw new Exception(result.StatusCode + " " + result.ReasonPhrase + " " + await result.Content.ReadAsStringAsync());
         }
-
-        /// <summary>
-        /// Initiates the process of getting a consent for bank accounts. 
-        /// </summary>
-        /// <param name="bankAccessRequest"></param>
-        /// <returns></returns>
-        public async Task<AccountsForPaymentResponseInit> GetAccountsForPaymentsInitAsync(AccountsForPaymentRequestInit accountsForPaymentRequestInit, string? XRequestID=null)
-        {
-           
-            var client = _httpClientFactory.CreateClient("BankingSdkGatewayClient");
-            client = SetHeaders(client, XRequestID);
-            
-            var stringContent = new StringContent(JsonConvert.SerializeObject(accountsForPaymentRequestInit), Encoding.UTF8, "application/json");
-
-            var result = await client.PostAsync("ob/pis/accounts", stringContent);
-
-            if (result.IsSuccessStatusCode)
-            {
-                AccountsForPaymentResponseInit accountsForPaymentResponseInit =  JsonConvert.DeserializeObject<AccountsForPaymentResponseInit>(await result.Content.ReadAsStringAsync(), new JsonSerializerSettings
-                {
-                    ObjectCreationHandling = ObjectCreationHandling.Replace
-                });
-                return (AccountsForPaymentResponseInit)GetHeaders(accountsForPaymentResponseInit, result);
-            }
-            else if (result.StatusCode == HttpStatusCode.BadRequest)
-            {
-                throw new GatewayException(await GetGWError(result));
-            }
-            throw new Exception(result.StatusCode + " " + result.ReasonPhrase + " " + await result.Content.ReadAsStringAsync());
-        }
-
-        /// <summary>
-        /// Finalizes the request of consent. Must be called after the redirect from the bank.
-        /// </summary>
-        /// <param name="bankAccessRequestFinalize"></param>
-        /// <returns></returns>
-        public async Task<AccountsForPaymentFinalize> GetAccountsForPaymentsFinalizeAsync(AccountsForPaymentFinalizeRequest accountsForPaymentFinalizeRequest, string? XRequestID=null)
-        {
-            var client = _httpClientFactory.CreateClient("BankingSdkGatewayClient");
-            client = SetHeaders(client, XRequestID);
-            
-            var stringContent = new StringContent(JsonConvert.SerializeObject(accountsForPaymentFinalizeRequest), Encoding.UTF8, "application/json");
-
-            var result = await client.PutAsync("ob/pis/accounts", stringContent);
-
-            if (result.IsSuccessStatusCode)
-            {
-                AccountsForPaymentFinalize accountsForPaymentFinalize= JsonConvert.DeserializeObject<AccountsForPaymentFinalize>(await result.Content.ReadAsStringAsync(), new JsonSerializerSettings
-                {
-                    ObjectCreationHandling = ObjectCreationHandling.Replace
-                });
-                return (AccountsForPaymentFinalize)GetHeaders(accountsForPaymentFinalize, result);
-            }
-            else if (result.StatusCode == HttpStatusCode.BadRequest)
-            {
-                throw new GatewayException(await GetGWError(result));
-            }
-            throw new Exception(result.StatusCode + " " + result.ReasonPhrase + " " + await result.Content.ReadAsStringAsync());
-        }
-
         #endregion
 
         #region AIS-BANK-ACCESS

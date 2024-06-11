@@ -28,6 +28,14 @@ namespace Exthand.GatewayClient.Interface
         Task<PaymentFinalizeResponse> PaymentFinalizeAsync(PaymentFinalizeRequest paymentFinalizeRequest, string? XRequestID=null);
         Task<PaymentInitResponse> PaymentInitiateAsync(PaymentInitRequest paymentInitRequest, string? XRequestID=null);
         Task<PaymentStatusResponse> PaymentStatusAsync(PaymentStatusRequest paymentStatusRequest, string? XRequestID=null);
+
+        Task<BulkPaymentInitResponse> BulkPaymentInitiateAsync(BulkPaymentInitRequest bulkPaymentInitRequest,
+            string? XRequestID = null);        
+        Task<BulkPaymentFinalizeResponse> BulkPaymentFinalizeAsync(
+            BulkPaymentFinalizeRequest bulkPaymentFinalizeRequest, string? XRequestID = null);
+        Task<BulkPaymentStatusResponse> BulkPaymentStatusAsync(BulkPaymentStatusRequest bulkPaymentStatusRequest,
+            string? XRequestID = null);
+        
         Task<GatewayBool> RemoveBankAccountAsync(DeleteAccountRequest deleteAccountRequest, string? XRequestID=null);
         Task<BankAccessResponse> RequestBankAccessAsync(BankAccessRequest bankAccessRequest, string? XRequestID=null);
 

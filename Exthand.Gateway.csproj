@@ -8,6 +8,7 @@
     <Product>Exthand:Gateway STD2</Product>
     <Copyright>EXTHAND 2023 - 2024</Copyright>
     <PackageProjectUrl>https:://www.exthand.com</PackageProjectUrl>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageIcon>exthandPicto_FB.png</PackageIcon>
     <PackageIconUrl />
     <RepositoryUrl>https://github.com/exthand/Gateway</RepositoryUrl>
@@ -15,7 +16,7 @@
     <PackageLicenseExpression>MIT OR Apache-2.0</PackageLicenseExpression>
     <Description>This library connects you to Exthand:Gateway SAAS. You can then easily initiate payment (PIS) or access bank accounts (AIS) of +1300 open banking APIs worldwide.</Description>
     <PackageTags>psd2 open banking exthand finance payments account statement transaction</PackageTags>
-    <PackageVersion>8.0.2-alpha</PackageVersion>
+    <PackageVersion>8.0.2</PackageVersion>
     <ReleaseVersion>8.0.2</ReleaseVersion>
     <Version>8.0.2</Version>
     <Configurations>Release;Debug</Configurations>
@@ -36,6 +37,9 @@
 
   <ItemGroup>
     <None Remove="Newtonsoft.Json" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="README.md"  Pack="true" PackagePath="\"/>
   </ItemGroup>
   <ItemGroup>
     <None Include="exthandPicto_FB.png">

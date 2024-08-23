@@ -1,7 +1,6 @@
 # Exthand.Gateway
-Client library to use Exthand:Gateway and connect to +1300 banks worldwide.
+Client library to use Exthand:Gateway and connect to +2300 banks worldwide.
 This is a .Net Standard 2.0 version.
-Version .Net core 6 is also available.
 
 ## How to get started.
 

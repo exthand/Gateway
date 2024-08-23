@@ -137,7 +137,7 @@ namespace Exthand.GatewayClient
                 });
                 return (BankPaymentAccessOption)GetHeaders(bankPaymentAccessOption,result);
             }
-            else if (result.StatusCode == HttpStatusCode.BadRequest)
+            else if (result.StatusCode == HttpStatusCode.BadRequest || (int)result.StatusCode == 422)
             {
                 throw new GatewayException(await GetGWError(result));
             }
@@ -163,7 +163,7 @@ namespace Exthand.GatewayClient
 
                 return (PaymentInitResponse)GetHeaders(paymentInitResponse, result);
             }
-            else if (result.StatusCode == HttpStatusCode.BadRequest)
+            else if (result.StatusCode == HttpStatusCode.BadRequest || (int)result.StatusCode == 422)
             {
                 throw new GatewayException(await GetGWError(result));
             }
@@ -187,7 +187,7 @@ namespace Exthand.GatewayClient
                 });
                 return (PaymentFinalizeResponse)GetHeaders(paymentFinalizeResponse, result);
             }
-            else if (result.StatusCode == HttpStatusCode.BadRequest)
+            else if (result.StatusCode == HttpStatusCode.BadRequest || (int)result.StatusCode == 422)
             {
                 throw new GatewayException(await GetGWError(result));
             }
@@ -212,7 +212,7 @@ namespace Exthand.GatewayClient
                 });
                 return (PaymentStatusResponse)GetHeaders(paymentStatusResponse, result);
             }
-            else if (result.StatusCode == HttpStatusCode.BadRequest)
+            else if (result.StatusCode == HttpStatusCode.BadRequest || (int)result.StatusCode == 422)
             {
                 throw new GatewayException(await GetGWError(result));
             }
@@ -241,7 +241,7 @@ namespace Exthand.GatewayClient
                 });
                 return (AccountsForPaymentResponseInit)GetHeaders(accountsForPaymentResponseInit, result);
             }
-            else if (result.StatusCode == HttpStatusCode.BadRequest)
+            else if (result.StatusCode == HttpStatusCode.BadRequest || (int)result.StatusCode == 422)
             {
                 throw new GatewayException(await GetGWError(result));
             }
@@ -270,7 +270,7 @@ namespace Exthand.GatewayClient
                 });
                 return (AccountsForPaymentFinalize)GetHeaders(accountsForPaymentFinalize, result);
             }
-            else if (result.StatusCode == HttpStatusCode.BadRequest)
+            else if (result.StatusCode == HttpStatusCode.BadRequest || (int)result.StatusCode == 422)
             {
                 throw new GatewayException(await GetGWError(result));
             }
@@ -298,8 +298,9 @@ namespace Exthand.GatewayClient
                 });
                 return (BulkPaymentInitResponse)GetHeaders(bulkPaymentInitResponse, result);
             }
-            else if (result.StatusCode == HttpStatusCode.BadRequest)
+            else if (result.StatusCode == HttpStatusCode.BadRequest || (int)result.StatusCode == 422)
             {
+                //Bad Request or Pre-conditions failed.
                 throw new GatewayException(await GetGWError(result));
             }
             throw new Exception(result.StatusCode + " " + result.ReasonPhrase + " " + await result.Content.ReadAsStringAsync());
@@ -322,7 +323,7 @@ namespace Exthand.GatewayClient
                 });
                 return (BulkPaymentFinalizeResponse)GetHeaders(bulkPaymentFinalizeResponse, result);
             }
-            else if (result.StatusCode == HttpStatusCode.BadRequest)
+            else if (result.StatusCode == HttpStatusCode.BadRequest || (int)result.StatusCode == 422)
             {
                 throw new GatewayException(await GetGWError(result));
             }
@@ -347,7 +348,7 @@ namespace Exthand.GatewayClient
                 });
                 return (BulkPaymentStatusResponse)GetHeaders(bulkPaymentStatusResponse, result);
             }
-            else if (result.StatusCode == HttpStatusCode.BadRequest)
+            else if (result.StatusCode == HttpStatusCode.BadRequest || (int)result.StatusCode == 422)
             {
                 throw new GatewayException(await GetGWError(result));
             }
@@ -384,7 +385,7 @@ namespace Exthand.GatewayClient
                 return (BankAccessOption) GetHeaders((IBase)bankAccessOption, result);
 
             }
-            else if (result.StatusCode == HttpStatusCode.BadRequest)
+            else if (result.StatusCode == HttpStatusCode.BadRequest || (int)result.StatusCode == 422)
             {
                 throw new GatewayException(await GetGWError(result));
             }
@@ -413,7 +414,7 @@ namespace Exthand.GatewayClient
                 });
                 return (BankAccessResponse)GetHeaders(bankAccessResponse, result);
             }
-            else if (result.StatusCode == HttpStatusCode.BadRequest)
+            else if (result.StatusCode == HttpStatusCode.BadRequest || (int)result.StatusCode == 422)
             {
                 throw new GatewayException(await GetGWError(result));
             }
@@ -442,7 +443,7 @@ namespace Exthand.GatewayClient
                 });
                 return (BankAccessResponseFinalize)GetHeaders(bankAccessResponseFinalize, result);
             }
-            else if (result.StatusCode == HttpStatusCode.BadRequest)
+            else if (result.StatusCode == HttpStatusCode.BadRequest || (int)result.StatusCode == 422)
             {
                 throw new GatewayException(await GetGWError(result));
             }
@@ -469,7 +470,7 @@ namespace Exthand.GatewayClient
                 gatewayBool.value = true;
                 return (GatewayBool)GetHeaders(gatewayBool, result);
             }
-            else if (result.StatusCode == HttpStatusCode.BadRequest)
+            else if (result.StatusCode == HttpStatusCode.BadRequest || (int)result.StatusCode == 422)
             {
                 throw new GatewayException(await GetGWError(result));
             }
@@ -496,7 +497,7 @@ namespace Exthand.GatewayClient
                 gatewayBool.value = true;
                 return (GatewayBool)GetHeaders(gatewayBool, result);
             }
-            else if (result.StatusCode == HttpStatusCode.BadRequest)
+            else if (result.StatusCode == HttpStatusCode.BadRequest || (int)result.StatusCode == 422)
             {
                 throw new GatewayException(await GetGWError(result));
             }
@@ -521,7 +522,7 @@ namespace Exthand.GatewayClient
                 });
                 return (BankAccountsResponse)GetHeaders(bankAccountsResponse, result);
             }
-            else if (result.StatusCode == HttpStatusCode.BadRequest)
+            else if (result.StatusCode == HttpStatusCode.BadRequest || (int)result.StatusCode == 422)
             {
                 throw new GatewayException(await GetGWError(result));
             }
@@ -550,7 +551,7 @@ namespace Exthand.GatewayClient
                 });
                 return (BalanceResponse)GetHeaders(balanceResponse, result);
             }
-            else if (result.StatusCode == HttpStatusCode.BadRequest)
+            else if (result.StatusCode == HttpStatusCode.BadRequest || (int)result.StatusCode == 422)
             {
                 throw new GatewayException(await GetGWError(result));
             }
@@ -577,7 +578,7 @@ namespace Exthand.GatewayClient
 
                 return (TransactionResponse)GetHeaders(transactionResponse, result);
             }
-            else if (result.StatusCode == HttpStatusCode.BadRequest)
+            else if (result.StatusCode == HttpStatusCode.BadRequest || (int)result.StatusCode == 422)
             {
                 throw new GatewayException(await GetGWError(result));
             }
@@ -603,7 +604,7 @@ namespace Exthand.GatewayClient
                     transactionResponse.isConsentLost = true;
                 return (TransactionResponse)GetHeaders(transactionResponse, result);
             }
-            else if (result.StatusCode == HttpStatusCode.BadRequest)
+            else if (result.StatusCode == HttpStatusCode.BadRequest || (int)result.StatusCode == 422)
             {
                 throw new GatewayException(await GetGWError(result));
             }
@@ -633,7 +634,7 @@ namespace Exthand.GatewayClient
                 });
                 return (TermsDTO)GetHeaders(termsDto, result);
             }
-            else if (result.StatusCode == HttpStatusCode.BadRequest)
+            else if (result.StatusCode == HttpStatusCode.BadRequest || (int)result.StatusCode == 422)
             {
                 throw new GatewayException(await GetGWError(result));
             }
@@ -670,7 +671,7 @@ namespace Exthand.GatewayClient
                 });
                 return (TermsValidated)GetHeaders(termsValidated, result);
             }
-            else if (result.StatusCode == HttpStatusCode.BadRequest)
+            else if (result.StatusCode == HttpStatusCode.BadRequest || (int)result.StatusCode == 422)
             {
                 throw new GatewayException(await GetGWError(result));
             }
@@ -700,7 +701,7 @@ namespace Exthand.GatewayClient
                 });
                 return (UserRegisterResponse)GetHeaders(userRegisterResponse, result);
             }
-            else if (result.StatusCode == HttpStatusCode.BadRequest)
+            else if (result.StatusCode == HttpStatusCode.BadRequest || (int)result.StatusCode == 422)
             {
                 throw new GatewayException(await GetGWError(result));
             }

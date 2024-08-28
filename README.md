@@ -223,5 +223,10 @@ Just call the method with the [PaymentStatusRequest](https://github.com/exthand/
 You'll get an answer object [PaymentStatusResponse](https://github.com/exthand/Exthand.Gateway/blob/master/Models/PaymentStatusResponse.cs). Structure is similar to the one you receive when you call the FinalizeAsync method.
 
 
+# ChangeLog
+
+## 8.0.3
+
+Added support for RETRY ResuktStatus
 
 

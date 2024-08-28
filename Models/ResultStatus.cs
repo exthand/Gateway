@@ -15,6 +15,7 @@ namespace Exthand.GatewayClient.Models
         PASSWORD = 4,
         MORE_INFO = 5,
         SELECT_OPTION = 6,
-        ERROR=7
+        ERROR=7,
+        RETRY=8
     }
 }

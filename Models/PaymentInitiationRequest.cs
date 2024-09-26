@@ -32,6 +32,18 @@ namespace Exthand.GatewayClient.Models
         Instant
     }
 
+    /// <summary>
+    /// Used to specify a structured information to the debtor.
+    /// https://docs.exthand.com/docs/structured-remittance#bba
+    /// </summary>
+    public class StructuredRemittance
+    {
+        public string? code { get; set; }
+        public string? issuer { get; set; }
+        public string? reference { get; set; }
+    }
+    
+    
     public class PaymentInitiationRequest
     {
         [Required]
@@ -71,6 +83,7 @@ namespace Exthand.GatewayClient.Models
         [Required]
         public string flowId { get; set; }
         public string remittanceInformationUnstructured { get; set; } = "";
+        public StructuredRemittance? remittanceInformationStructured { get; set; }
         public Dictionary<String, String> additionalProperties { get; set; } = new Dictionary<string, string>();
 
     }

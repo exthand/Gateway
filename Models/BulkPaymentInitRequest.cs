@@ -89,7 +89,8 @@ namespace Exthand.GatewayClient.Models
         public string endToEndId { get; set; }
 
         public string remittanceInformationUnstructured { get; set; } = "";
-
+        public StructuredRemittance? remittanceInformationStructured { get; set; }
+        
         /// <summary>
         /// ISO 20022 Regulatory Reporting Code list. Check in options if required with regulatoryReportingCodeRequired field and, in case it is required, the list of available codes are found in options too, field regulatoryReportingCodes. Add here the value field.
         /// </summary>

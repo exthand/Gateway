@@ -229,4 +229,8 @@ You'll get an answer object [PaymentStatusResponse](https://github.com/exthand/E
 
 Added support for RETRY ResuktStatus
 
+## 8.0.4
+
+Support for Structured Communications has been added.
+In Belgium, it relates to communication in this form "+++000/0000/00000+++".
 

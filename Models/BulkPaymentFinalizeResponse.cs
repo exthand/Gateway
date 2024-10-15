@@ -17,7 +17,7 @@ namespace Exthand.GatewayClient.Models
 
         public string paymentId { get; set; }
 
-        public PaymentStatus paymentStatus { get; set; }
+        public BulkPaymentStatus bulkPaymentStatus { get; set; }
 
         public string rawResponse { get; set; }
         public string XRequestID { get; set; }

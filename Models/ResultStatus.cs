@@ -8,6 +8,7 @@ namespace Exthand.GatewayClient.Models
 {
     public enum ResultStatus : int
     {
+        NOTAVAILABLE = -1,
         UNKNOW = 0,
         DONE = 1,
         REDIRECT =2,

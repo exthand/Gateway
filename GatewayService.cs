@@ -567,7 +567,7 @@ namespace Exthand.GatewayClient
 
             HttpResponseMessage result = await client.PostAsync($"ob/ais/accounts/{accountId}/transactions", stringContent);
 
-            if (result.StatusCode==HttpStatusCode.OK)
+            if (result.StatusCode==HttpStatusCode.OK || result.StatusCode == HttpStatusCode.PartialContent)
             {
                 TransactionResponse transactionResponse = JsonConvert.DeserializeObject<TransactionResponse>(await result.Content.ReadAsStringAsync(), new JsonSerializerSettings
                 {
@@ -578,7 +578,8 @@ namespace Exthand.GatewayClient
 
                 return (TransactionResponse)GetHeaders(transactionResponse, result);
             }
-            else if (result.StatusCode == HttpStatusCode.BadRequest || (int)result.StatusCode == 422)
+
+            if (result.StatusCode == HttpStatusCode.BadRequest || (int)result.StatusCode == 422)
             {
                 throw new GatewayException(await GetGWError(result));
             }

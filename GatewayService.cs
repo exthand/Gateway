@@ -543,7 +543,7 @@ namespace Exthand.GatewayClient
 
             var result = await client.PostAsync($"ob/ais/accounts/{accountId}/balances", stringContent);
 
-            if (result.StatusCode==HttpStatusCode.OK)
+            if (result.IsSuccessStatusCode)
             {
                 BalanceResponse balanceResponse = JsonConvert.DeserializeObject<BalanceResponse>(await result.Content.ReadAsStringAsync(), new JsonSerializerSettings
                 {
@@ -567,7 +567,7 @@ namespace Exthand.GatewayClient
 
             HttpResponseMessage result = await client.PostAsync($"ob/ais/accounts/{accountId}/transactions", stringContent);
 
-            if (result.StatusCode==HttpStatusCode.OK || result.StatusCode == HttpStatusCode.PartialContent)
+            if (result.StatusCode == HttpStatusCode.OK || result.StatusCode == HttpStatusCode.PartialContent)
             {
                 TransactionResponse transactionResponse = JsonConvert.DeserializeObject<TransactionResponse>(await result.Content.ReadAsStringAsync(), new JsonSerializerSettings
                 {
@@ -595,7 +595,7 @@ namespace Exthand.GatewayClient
 
             var result = await client.PostAsync($"ob/ais/accounts/{accountId}/transactions/next", stringContent);
 
-            if (result.StatusCode==HttpStatusCode.OK || result.StatusCode == HttpStatusCode.PartialContent)
+            if (result.StatusCode == HttpStatusCode.OK || result.StatusCode == HttpStatusCode.PartialContent)
             {
                 TransactionResponse transactionResponse= JsonConvert.DeserializeObject<TransactionResponse>(await result.Content.ReadAsStringAsync(), new JsonSerializerSettings
                 {

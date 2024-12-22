@@ -16,9 +16,9 @@
     <PackageLicenseExpression>MIT OR Apache-2.0</PackageLicenseExpression>
     <Description>This library connects you to Exthand:Gateway SAAS. You can then easily initiate payment (PIS) or access bank accounts (AIS) of +1300 open banking APIs worldwide.</Description>
     <PackageTags>psd2 open banking exthand finance payments account statement transaction</PackageTags>
-    <PackageVersion>8.0.10</PackageVersion>
-    <ReleaseVersion>8.0.10</ReleaseVersion>
-    <Version>8.0.10</Version>
+    <PackageVersion>8.0.11</PackageVersion>
+    <ReleaseVersion>8.0.11</ReleaseVersion>
+    <Version>8.0.11</Version>
     <Configurations>Release;Debug</Configurations>
     <Title>Exthand.Gateway</Title>
   </PropertyGroup>

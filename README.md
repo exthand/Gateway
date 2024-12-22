@@ -234,3 +234,6 @@ Added support for RETRY ResuktStatus
 Support for Structured Communications has been added.
 In Belgium, it relates to communication in this form "+++000/0000/00000+++".
 
+## 8.0.11
+
+Now GetBalances accepts any IsSuccess status code.

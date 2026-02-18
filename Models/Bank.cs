@@ -44,7 +44,7 @@ namespace Exthand.GatewayClient.Models
 
         public BankStatus status { get; set; }
         
-        public string extraInfo { get; set; }
+        public BankExtraInfo extraInfo { get; set; }
 
         /// <summary>
         /// Grouping name.
@@ -52,5 +52,16 @@ namespace Exthand.GatewayClient.Models
         /// </summary>
         public string bankGroup { get; set; }
 
+    }
+    
+    public class BankExtraInfo
+    {
+        public List<BankBicEntry> Bics { get; set; }
+    }
+
+    public class BankBicEntry
+    {
+        public string Bic { get; set; }
+        public string BranchCode { get; set; }
     }
 }

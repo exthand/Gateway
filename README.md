@@ -241,3 +241,20 @@ Now GetBalances accepts any IsSuccess status code.
 ## 8.0.12
 
 Added support for "extrInfo" property in the Bank class. 
+
+## 8.0.14
+
+Added support for "extraInfo" property in the Bank class: 
+
+```
+public class BankExtraInfo
+{
+    public List<BankBicEntry> Bics { get; set; }
+}
+
+public class BankBicEntry
+{
+    public string Bic { get; set; }
+    public string BranchCode { get; set; }
+}
+```

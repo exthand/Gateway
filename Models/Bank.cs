@@ -43,6 +43,8 @@ namespace Exthand.GatewayClient.Models
         public string countryISO { get; set; }
 
         public BankStatus status { get; set; }
+        
+        public string extraInfo { get; set; }
 
         /// <summary>
         /// Grouping name.

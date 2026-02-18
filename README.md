@@ -237,3 +237,7 @@ In Belgium, it relates to communication in this form "+++000/0000/00000+++".
 ## 8.0.11
 
 Now GetBalances accepts any IsSuccess status code.
+
+## 8.0.12
+
+Added support for "extrInfo" property in the Bank class. 

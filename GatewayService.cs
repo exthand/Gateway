@@ -27,16 +27,21 @@ namespace Exthand.GatewayClient
 
 
         /// <summary>
-        /// Sets the XRequestID value if provided.
+        /// Sets the XRequestID and XCorrelationID values if provided.
         /// </summary>
         /// <param name="httpClient"></param>
-        /// <param name="headerContent"></param>
+        /// <param name="xRequestId"></param>
+        /// <param name="xCorrelationId"></param>
         /// <returns></returns>
-        private HttpClient SetHeaders(HttpClient httpClient, string? headerContent = null)
+        private HttpClient SetHeaders(HttpClient httpClient, string? xRequestId = null, string? xCorrelationId = null)
         {
-            if (headerContent is not null)
+            if (xRequestId is not null)
             {
-                httpClient.DefaultRequestHeaders.Add("X-Request-ID", headerContent);
+                httpClient.DefaultRequestHeaders.Add("X-Request-ID", xRequestId);
+            }
+            if (xCorrelationId is not null)
+            {
+                httpClient.DefaultRequestHeaders.Add("X-Correlation-ID", xCorrelationId);
             }
             return httpClient;
         }

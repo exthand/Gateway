@@ -5,7 +5,7 @@ This is a .Net Standard 2.0 version.
 ## How to get started.
 
 Company website: https://www.exthand.com
-Nuget Paackage of this repo: https://www.nuget.org/packages/Exthand.Gateway
+Nuget Paackage of this repo: https://www.nuget.org/packages/Exthand.GatewayV2
 
 ### 1. First create an account.
 

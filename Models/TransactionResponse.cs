@@ -30,8 +30,12 @@ namespace Exthand.GatewayClient.Models
 
     public class Transaction
     {
-
         public string id { get; set; }
+        public Guid? callId { get; set; }
+        public DateTimeOffset? fetchedDate { get; set; }
+        public string gwAccountId { get; set; }
+        public string gwSequence { get; set; }
+        public bool possibleHole { get; set; }
         public decimal amount { get; set; }
         public string counterpartReference { get; set; }
         public string counterpartName { get; set; }
@@ -41,13 +45,20 @@ namespace Exthand.GatewayClient.Models
 
         public DateTimeOffset? executionDate { get; set; }
         public DateTimeOffset? valueDate { get; set; }
-        public bool possibleHole { get; set; }
 
         public TransactionRemittanceInformation remittanceInformation { get; set; }
+        public Dictionary<string, string> supplementaryData { get; set; }
         public TransactionBankTransactionCode bankTransactionCode { get; set; }
+        public ProprietaryBankTransactionCode proprietaryBankTransactionCode { get; set; }
+        /// <summary>
+        /// If true, means the transaction is a SUM of a batch of transactions, provided by the bank.
+        /// </summary>
+        public bool? globalization { get; set; }
+        public TransactionInstructedAmount instructedAmount { get; set; }
+        public string endToEndId { get; set; }
+        public CardInstrument cardInstrument { get; set; }
+        public Mandate mandate { get; set; }
         
-        public string gwAccountId { get; set; }
-        public string gwSequence { get; set; }
         public long gwSequenceNumber { get
             {
                 if (string.IsNullOrEmpty(gwSequence))
@@ -58,12 +69,6 @@ namespace Exthand.GatewayClient.Models
                 }
             }
         }
-
-        /// <summary>
-        /// If true, means the transaction is a SUM of a batch of transactions, provided by the bank.
-        /// </summary>
-        public bool? globalization { get; set; }
-
     }
 
     public class TransactionRemittanceInformation
@@ -96,4 +101,60 @@ namespace Exthand.GatewayClient.Models
         public string subFamily { get; set; }
     }
 
+    public class ProprietaryBankTransactionCode
+    {
+        public string code { get; set; }
+        public string issuer { get; set; }
+    }
+
+    public class TransactionInstructedAmount
+    {
+        /// <summary>
+        /// Original transaction amount
+        /// </summary>
+        public decimal amount { get; set; }
+        /// <summary>
+        /// Original transaction currency
+        /// </summary>
+        public string currency { get; set; }
+        /// <summary>
+        /// Exchange rate information
+        /// </summary>
+        public ExchangeRateInformation exchangeRateInformation { get; set; }
+    }
+
+    public class ExchangeRateInformation
+    {
+        /// <summary>
+        /// Currency exchange rate
+        /// </summary>
+        public decimal? exchangeRate { get; set; }
+    }
+
+    public class Mandate
+    {
+        public string MandateReference { get; set; }
+    }
+
+    public class CardInstrument
+    {
+        /// <summary>
+        /// The card authorisation type.
+        /// </summary>
+        public string authorisationType { get; set; }
+        /// <summary>
+        /// Name of the card scheme.
+        /// </summary>
+        public string cardSchemeName { get; set; }
+        /// <summary>
+        /// Identification assigned by an institution to identify the card instrument used in the transaction. 
+        /// This identification is known by the account owner, and may be masked.
+        /// </summary>
+        public string identification { get; set; }
+
+        /// <summary>
+        /// Name of the cardholder using the card instrument.
+        /// </summary>
+        public string name { get; set; }
+    }
 }

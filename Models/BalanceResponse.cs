@@ -21,6 +21,7 @@ namespace Exthand.GatewayClient.Models
 
     public class Balance
     {
+        public Guid? callId { get; set; }
         public string balanceType { get; set; }
         public string rawBalanceType { get; set; }
         public DateTimeOffset? referenceDate { get; set; }

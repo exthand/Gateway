@@ -258,3 +258,49 @@ public class BankBicEntry
     public string BranchCode { get; set; }
 }
 ```
+## 8.0.15
+ 
+### Adding extra properties to Balance models:
+```
+public Guid? callId { get; set; } // Internal Id of the call made to the bank. Can be used by the support to identify the source of data.
+public DateTimeOffset? fetchedDate { get; set; } // date of the call made to the bank
+public bool? creditLimitIncluded { get; set; }
+```
+ 
+### Adding extra properties to Transaction models:
+```
+    public Guid? callId { get; set; } // Internal Id of the call made to the bank. Can be used to see call logs in the DevPortal
+    public DateTimeOffset? fetchedDate { get; set; } // date of the call made to the bank
+    public ProprietaryBankTransactionCode proprietaryBankTransactionCode { get; set; }
+    public TransactionInstructedAmount instructedAmount { get; set; }
+    public CardInstrument cardInstrument { get; set; }
+    public Mandate mandate { get; set; }
+ 
+    public class ProprietaryBankTransactionCode
+    {
+        public string code { get; set; }
+        public string issuer { get; set; }
+    }
+    public class TransactionInstructedAmount
+    {
+        public decimal amount { get; set; } // Original transaction amount
+        public string currency { get; set; } // Original transaction currency
+        public ExchangeRateInformation exchangeRateInformation { get; set; } // Exchange rate information
+    }
+    public class ExchangeRateInformation
+    {
+        public decimal? exchangeRate { get; set; } // Currency exchange rate
+    }
+    public class CardInstrument
+    {
+        public string authorisationType { get; set; } // The card authorisation type.
+        public string cardSchemeName { get; set; } // Name of the card scheme.
+        public string identification { get; set; } // Identification assigned by an institution to identify the card instrument used in the transaction. This identification is known by the account owner, and may be masked.
+        public string name { get; set; } // Name of the cardholder using the card instrument.
+    }
+
+    public class Mandate
+    {
+        public string MandateReference { get; set; }
+    }
+```

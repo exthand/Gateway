@@ -1,6 +1,4 @@
-﻿
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
@@ -42,5 +40,6 @@ namespace Exthand.GatewayClient.Interface
         Task<AccountsForPaymentResponseInit> GetAccountsForPaymentsInitAsync(AccountsForPaymentRequestInit accountsForPaymentRequestInit, string? XRequestID=null);
         Task<AccountsForPaymentFinalize> GetAccountsForPaymentsFinalizeAsync(AccountsForPaymentFinalizeRequest accountsForPaymentFinalizeRequest, string? XRequestID=null);
 
+        Task<VopResponse> VerifyPayeeAsync(VopRequest vopRequest, string? XRequestID = null);
     }
 }

@@ -304,3 +304,31 @@ public bool? creditLimitIncluded { get; set; }
         public string MandateReference { get; set; }
     }
 ```
+
+## 8.0.16
+
+### Added Verification of Payee (VOP) support
+
+New method `VerifyPayeeAsync` added to `IGatewayService` interface. Calls `POST /ob/vop` endpoint to verify payee name against the account holder of a given IBAN.
+
+#### Request model:
+```
+    public class VerifyPayeeRequest
+    {
+        public string bic { get; set; }
+        public string iban { get; set; }
+        public string name { get; set; }
+    }
+```
+
+# Response
+```
+    public class VerifyPayeeResponse
+    {
+        public string name { get; set; }
+        public string iban { get; set; }
+        public string bic { get; set; }
+        public bool isVerified { get; set; }
+        public string status { get; set; }
+    }
+```

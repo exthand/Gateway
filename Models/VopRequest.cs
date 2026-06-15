@@ -15,7 +15,6 @@ namespace Exthand.GatewayClient.Models
         [Required]
         public string iban { get; set; }
 
-        [Required]
         public string name { get; set; }
 
         public VopIdentifier identifier { get; set; }

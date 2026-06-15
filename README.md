@@ -313,22 +313,120 @@ New method `VerifyPayeeAsync` added to `IGatewayService` interface. Calls `POST 
 
 #### Request model:
 ```
-    public class VerifyPayeeRequest
+    public class VopRequest
     {
-        public string bic { get; set; }
-        public string iban { get; set; }
-        public string name { get; set; }
+        public TppContext tppContext { get; set; } = new TppContext();
+
+        [Required]
+        public VopDetails vop { get; set; } = new VopDetails();
+    }
+
+    public class VopDetails
+    {
+        [Required]
+        public string iban { get; set; } // IBAN of the payee to verify.
+        public string name { get; set; } // name of the account owner.
+        public VopIdentifier identifier { get; set; } // identifier of the payee.
+    }
+
+    public class VopIdentifier
+    {
+        public string type { get; set; } // type of the identifier.
+        public string value { get; set; } // value of the identifier.
     }
 ```
 
-# Response
+### Response
 ```
-    public class VerifyPayeeResponse
+    public class VopResponse : IBase
     {
-        public string name { get; set; }
-        public string iban { get; set; }
-        public string bic { get; set; }
-        public bool isVerified { get; set; }
-        public string status { get; set; }
+        public string id { get; set; }
+        public string remoteId { get; set; }
+        public VopResult vopResult { get; set; } // result of the verification.
+        public string XRequestID { get; set; }
+        public string XCorrelationID { get; set; }
+        public string XOperationID { get; set; }
     }
+
+    public class VopResult
+    {
+        public VopMatchResult vopMatchResult { get; set; } // result of the match.
+        public BankAccountHolder bankAccountHolder { get; set; } // details of the bank account holder.
+        public VopBank bank { get; set; } // details of the bank.
+    }
+
+    public class VopMatchResult
+    {
+        public string result { get; set; } // result of the match.
+    }
+
+    public class BankAccountHolder
+    {
+        public string name { get; set; } // name of the bank account holder.
+        public VopIdentifier identifier { get; set; } // identifier of the bank account holder.
+    }
+
+    public class VopBank
+    {
+        public string bic { get; set; } // BIC of the bank.
+        public string name { get; set; } // name of the bank.
+    }
+```
+
+### Example usage:
+```
+    VopRequest request = new VopRequest
+    {
+        tppContext = new TppContext
+        {
+            tppId = "your-tpp-id",
+            app = "your-app-name",
+            flow = Guid.NewGuid().ToString(),
+            transaction = Guid.NewGuid().ToString(),
+            unit = "your-unit"
+        },
+        vop = new VopDetails
+        {
+            iban = "payee-iban",
+            name = "payee-name",
+            identifier = new VopIdentifier
+            {
+                type = "identifier-type",
+                value = "identifier-value"
+            }
+        }
+    };
+
+    VopResponse response = await gatewayService.VerifyPayeeAsync(
+        request,
+        XRequestID: Guid.NewGuid().ToString());
+
+    string matchResult = response.vopResult?.vopMatchResult?.result;
+
+    switch (matchResult)
+    {
+        case "MATCH":
+            Console.WriteLine("Payee matches the bank account holder.");
+            break;
+
+        case "PARTIAL_MATCH":
+            Console.WriteLine("Payee partially matches the bank account holder.");
+            Console.WriteLine($"Registered name: {response.vopResult?.bankAccountHolder?.name}");
+            break;
+
+        case "NO_MATCH":
+            Console.WriteLine("Payee does not match the bank account holder.");
+            break;
+
+        default:
+            Console.WriteLine($"Unknown VOP result: {matchResult}");
+            break;
+    }
+
+    Console.WriteLine($"VOP Id: {response.id}");
+    Console.WriteLine($"Remote Id: {response.remoteId}");
+    Console.WriteLine($"Bank BIC: {response.vopResult?.bank?.bic}");
+    Console.WriteLine($"Bank name: {response.vopResult?.bank?.name}");
+    Console.WriteLine($"X-Correlation-ID: {response.XCorrelationID}");
+    Console.WriteLine($"X-Operation-ID: {response.XOperationID}");
 ```

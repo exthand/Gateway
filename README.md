@@ -309,91 +309,17 @@ public bool? creditLimitIncluded { get; set; }
 
 ### Added Verification of Payee (VOP) support
 
-New method `VerifyPayeeAsync` added to `IGatewayService` interface. Calls `POST /ob/vop` endpoint to verify payee name against the account holder of a given IBAN.
-
-#### Request model:
-```
-    public class VopRequest
-    {
-        public TppContext tppContext { get; set; } = new TppContext();
-
-        [Required]
-        public VopDetails vop { get; set; } = new VopDetails();
-    }
-
-    public class VopDetails
-    {
-        [Required]
-        public string iban { get; set; } // IBAN of the payee to verify.
-        public string name { get; set; } // name of the account owner.
-        public VopIdentifier identifier { get; set; } // identifier of the payee.
-    }
-
-    public class VopIdentifier
-    {
-        public string type { get; set; } // type of the identifier.
-        public string value { get; set; } // value of the identifier.
-    }
-```
-
-### Response
-```
-    public class VopResponse : IBase
-    {
-        public string id { get; set; }
-        public string remoteId { get; set; }
-        public VopResult vopResult { get; set; } // result of the verification.
-        public string XRequestID { get; set; }
-        public string XCorrelationID { get; set; }
-        public string XOperationID { get; set; }
-    }
-
-    public class VopResult
-    {
-        public VopMatchResult vopMatchResult { get; set; } // result of the match.
-        public BankAccountHolder bankAccountHolder { get; set; } // details of the bank account holder.
-        public VopBank bank { get; set; } // details of the bank.
-    }
-
-    public class VopMatchResult
-    {
-        public string result { get; set; } // result of the match.
-    }
-
-    public class BankAccountHolder
-    {
-        public string name { get; set; } // name of the bank account holder.
-        public VopIdentifier identifier { get; set; } // identifier of the bank account holder.
-    }
-
-    public class VopBank
-    {
-        public string bic { get; set; } // BIC of the bank.
-        public string name { get; set; } // name of the bank.
-    }
-```
+New method `VerifyPayeeAsync` added to `IGatewayService` interface. Calls `POST /ob/vop` endpoint to verify payee name against the account holder of a given IBAN. (documentation: https://docs.exthand.com/docs/verification-of-payee)
 
 ### Example usage:
 ```
     VopRequest request = new VopRequest
     {
-        tppContext = new TppContext
-        {
-            tppId = "your-tpp-id",
-            app = "your-app-name",
-            flow = Guid.NewGuid().ToString(),
-            transaction = Guid.NewGuid().ToString(),
-            unit = "your-unit"
-        },
+        tppContext = new TppContext{... }, // check https://docs.exthand.com/docs/properties#tppcontext
         vop = new VopDetails
         {
             iban = "payee-iban",
-            name = "payee-name",
-            identifier = new VopIdentifier
-            {
-                type = "identifier-type",
-                value = "identifier-value"
-            }
+            name = "payee-name"
         }
     };
 

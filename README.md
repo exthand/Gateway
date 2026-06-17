@@ -304,3 +304,55 @@ public bool? creditLimitIncluded { get; set; }
         public string MandateReference { get; set; }
     }
 ```
+
+## 8.0.16
+
+### Added Verification of Payee (VOP) support
+
+New method `VerifyPayeeAsync` added to `IGatewayService` interface. Calls `POST /ob/vop` endpoint to verify payee name against the account holder of a given IBAN. (documentation: https://docs.exthand.com/docs/verification-of-payee)
+
+### Example usage:
+```
+    VopRequest request = new VopRequest
+    {
+        tppContext = new TppContext{... }, // check https://docs.exthand.com/docs/properties#tppcontext
+        vop = new VopDetails
+        {
+            iban = "payee-iban",
+            name = "payee-name"
+        }
+    };
+
+    VopResponse response = await gatewayService.VerifyPayeeAsync(
+        request,
+        XRequestID: Guid.NewGuid().ToString());
+
+    string matchResult = response.vopResult?.vopMatchResult?.result;
+
+    switch (matchResult)
+    {
+        case "MATCH":
+            Console.WriteLine("Payee matches the bank account holder.");
+            break;
+
+        case "PARTIAL_MATCH":
+            Console.WriteLine("Payee partially matches the bank account holder.");
+            Console.WriteLine($"Registered name: {response.vopResult?.bankAccountHolder?.name}");
+            break;
+
+        case "NO_MATCH":
+            Console.WriteLine("Payee does not match the bank account holder.");
+            break;
+
+        default:
+            Console.WriteLine($"Unknown VOP result: {matchResult}");
+            break;
+    }
+
+    Console.WriteLine($"VOP Id: {response.id}");
+    Console.WriteLine($"Remote Id: {response.remoteId}");
+    Console.WriteLine($"Bank BIC: {response.vopResult?.bank?.bic}");
+    Console.WriteLine($"Bank name: {response.vopResult?.bank?.name}");
+    Console.WriteLine($"X-Correlation-ID: {response.XCorrelationID}");
+    Console.WriteLine($"X-Operation-ID: {response.XOperationID}");
+```

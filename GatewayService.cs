@@ -717,6 +717,38 @@ namespace Exthand.GatewayClient
 
         #endregion
 
+        #region VOP
+        /// <summary>
+        /// Verifies the payee (recipient) name against the account holder of the specified IBAN.
+        /// Calls POST /ob/vop endpoint.
+        /// </summary>
+        /// <param name="vopRequest">The verification of payee request containing payee name and IBAN</param>
+        /// <param name="XRequestID">Optional request correlation ID</param>
+        /// <returns>VopResponse containing the match status</returns>
+        public async Task<VopResponse> VerifyPayeeAsync(VopRequest vopRequest, string? XRequestID = null)
+        {
+            var client = _httpClientFactory.CreateClient("BankingSdkGatewayClient");
+            client = SetHeaders(client, XRequestID);
+
+            var stringContent = new StringContent(JsonConvert.SerializeObject(vopRequest), Encoding.UTF8, "application/json");
+
+            var result = await client.PostAsync("ob/vop", stringContent);
+
+            if (result.IsSuccessStatusCode)
+            {
+                VopResponse vopResponse = JsonConvert.DeserializeObject<VopResponse>(await result.Content.ReadAsStringAsync(), new JsonSerializerSettings
+                {
+                    ObjectCreationHandling = ObjectCreationHandling.Replace
+                });
+                return (VopResponse)GetHeaders(vopResponse, result);
+            }
+            else if (result.StatusCode == HttpStatusCode.BadRequest || (int)result.StatusCode == 422)
+            {
+                throw new GatewayException(await GetGWError(result));
+            }
+            throw new Exception(result.StatusCode + " " + result.ReasonPhrase + " " + await result.Content.ReadAsStringAsync());
+        }
+        #endregion
 
         #region ErrorMgmt
 

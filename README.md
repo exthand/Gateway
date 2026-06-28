@@ -305,7 +305,7 @@ public bool? creditLimitIncluded { get; set; }
     }
 ```
 
-## 8.0.16
+## 8.1.00
 
 ### Added Verification of Payee (VOP) support
 

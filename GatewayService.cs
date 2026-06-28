@@ -79,7 +79,7 @@ namespace Exthand.GatewayClient
         /// <returns>A list of Bank objects.</returns>
         public async Task<BankList> GetBanksAsync(string countryCode="", string? XRequestID=null)
         {
-            var client = _httpClientFactory.CreateClient("BankingSdkGatewayClient");
+            var client = _httpClientFactory.CreateClient(GatewayConfigurator.ClientName);
             client = SetHeaders(client, XRequestID);
             var result = await client.GetAsync("ob/banks?countryCode=" + countryCode);
 
@@ -104,7 +104,7 @@ namespace Exthand.GatewayClient
 
         public async Task<GatewayString> FindFlowIdAsync(string queryString, string? XRequestID=null)
         {
-            var client = _httpClientFactory.CreateClient("BankingSdkGatewayClient");
+            var client = _httpClientFactory.CreateClient(GatewayConfigurator.ClientName);
             client = SetHeaders(client, XRequestID);
             
             var result = await client.GetAsync("ob/findFlowId?queryString=" + HttpUtility.UrlEncode(queryString));
@@ -129,7 +129,7 @@ namespace Exthand.GatewayClient
         public async Task<BankPaymentAccessOption> GetBankPaymentAccessOptionsAsync(int connectorId, string? XRequestID=null)
         {
 
-            var client = _httpClientFactory.CreateClient("BankingSdkGatewayClient");
+            var client = _httpClientFactory.CreateClient(GatewayConfigurator.ClientName);
             client = SetHeaders(client, XRequestID);
             
             var result = await client.GetAsync("ob/pis/payments/options/" + connectorId.ToString());
@@ -151,7 +151,7 @@ namespace Exthand.GatewayClient
 
         public async Task<PaymentInitResponse> PaymentInitiateAsync(PaymentInitRequest paymentInitRequest, string? XRequestID=null)
         {
-            var client = _httpClientFactory.CreateClient("BankingSdkGatewayClient");
+            var client = _httpClientFactory.CreateClient(GatewayConfigurator.ClientNameNoRetry);
             client = SetHeaders(client, XRequestID);
             
             var stringContent = new StringContent(JsonConvert.SerializeObject(paymentInitRequest), Encoding.UTF8, "application/json");
@@ -177,7 +177,7 @@ namespace Exthand.GatewayClient
 
         public async Task<PaymentFinalizeResponse> PaymentFinalizeAsync(PaymentFinalizeRequest paymentFinalizeRequest, string? XRequestID=null)
         {
-            var client = _httpClientFactory.CreateClient("BankingSdkGatewayClient");
+            var client = _httpClientFactory.CreateClient(GatewayConfigurator.ClientNameNoRetry);
             client = SetHeaders(client, XRequestID);
             
             var stringContent = new StringContent(JsonConvert.SerializeObject(paymentFinalizeRequest), Encoding.UTF8, "application/json");
@@ -202,7 +202,7 @@ namespace Exthand.GatewayClient
         public async Task<PaymentStatusResponse> PaymentStatusAsync(PaymentStatusRequest paymentStatusRequest, string? XRequestID=null)
         {
 
-            var client = _httpClientFactory.CreateClient("BankingSdkGatewayClient");
+            var client = _httpClientFactory.CreateClient(GatewayConfigurator.ClientName);
             client = SetHeaders(client, XRequestID);
             
             var stringContent = new StringContent(JsonConvert.SerializeObject(paymentStatusRequest), Encoding.UTF8, "application/json");
@@ -230,8 +230,8 @@ namespace Exthand.GatewayClient
         /// <returns></returns>
         public async Task<AccountsForPaymentResponseInit> GetAccountsForPaymentsInitAsync(AccountsForPaymentRequestInit accountsForPaymentRequestInit, string? XRequestID=null)
         {
-           
-            var client = _httpClientFactory.CreateClient("BankingSdkGatewayClient");
+
+            var client = _httpClientFactory.CreateClient(GatewayConfigurator.ClientNameNoRetry);
             client = SetHeaders(client, XRequestID);
             
             var stringContent = new StringContent(JsonConvert.SerializeObject(accountsForPaymentRequestInit), Encoding.UTF8, "application/json");
@@ -260,7 +260,7 @@ namespace Exthand.GatewayClient
         /// <returns></returns>
         public async Task<AccountsForPaymentFinalize> GetAccountsForPaymentsFinalizeAsync(AccountsForPaymentFinalizeRequest accountsForPaymentFinalizeRequest, string? XRequestID=null)
         {
-            var client = _httpClientFactory.CreateClient("BankingSdkGatewayClient");
+            var client = _httpClientFactory.CreateClient(GatewayConfigurator.ClientNameNoRetry);
             client = SetHeaders(client, XRequestID);
             
             var stringContent = new StringContent(JsonConvert.SerializeObject(accountsForPaymentFinalizeRequest), Encoding.UTF8, "application/json");
@@ -288,7 +288,7 @@ namespace Exthand.GatewayClient
         
         public async Task<BulkPaymentInitResponse> BulkPaymentInitiateAsync(BulkPaymentInitRequest bulkPaymentInitRequest, string? XRequestID=null)
         {
-            var client = _httpClientFactory.CreateClient("BankingSdkGatewayClient");
+            var client = _httpClientFactory.CreateClient(GatewayConfigurator.ClientNameNoRetry);
             client = SetHeaders(client, XRequestID);
             
             var stringContent = new StringContent(JsonConvert.SerializeObject(bulkPaymentInitRequest), Encoding.UTF8, "application/json");
@@ -313,7 +313,7 @@ namespace Exthand.GatewayClient
 
         public async Task<BulkPaymentFinalizeResponse> BulkPaymentFinalizeAsync(BulkPaymentFinalizeRequest bulkPaymentFinalizeRequest, string? XRequestID=null)
         {
-            var client = _httpClientFactory.CreateClient("BankingSdkGatewayClient");
+            var client = _httpClientFactory.CreateClient(GatewayConfigurator.ClientNameNoRetry);
             client = SetHeaders(client, XRequestID);
             
             var stringContent = new StringContent(JsonConvert.SerializeObject(bulkPaymentFinalizeRequest), Encoding.UTF8, "application/json");
@@ -338,7 +338,7 @@ namespace Exthand.GatewayClient
         public async Task<BulkPaymentStatusResponse> BulkPaymentStatusAsync(BulkPaymentStatusRequest bulkPaymentStatusRequest, string? XRequestID=null)
         {
 
-            var client = _httpClientFactory.CreateClient("BankingSdkGatewayClient");
+            var client = _httpClientFactory.CreateClient(GatewayConfigurator.ClientName);
             client = SetHeaders(client, XRequestID);
             
             var stringContent = new StringContent(JsonConvert.SerializeObject(bulkPaymentStatusRequest), Encoding.UTF8, "application/json");
@@ -373,7 +373,7 @@ namespace Exthand.GatewayClient
         /// <exception cref="Exception"></exception>
         public async Task<BankAccessOption> GetBankAccessOptionsAsync(int connectorId, string? XRequestID=null)
         {
-            var client = _httpClientFactory.CreateClient("BankingSdkGatewayClient");
+            var client = _httpClientFactory.CreateClient(GatewayConfigurator.ClientName);
             
             client = SetHeaders(client, XRequestID);
             
@@ -404,7 +404,7 @@ namespace Exthand.GatewayClient
         /// <returns></returns>
         public async Task<BankAccessResponse> RequestBankAccessAsync(BankAccessRequest bankAccessRequest, string? XRequestID=null)
         {
-            var client = _httpClientFactory.CreateClient("BankingSdkGatewayClient");
+            var client = _httpClientFactory.CreateClient(GatewayConfigurator.ClientNameNoRetry);
             client = SetHeaders(client, XRequestID);
             
             var stringContent = new StringContent(JsonConvert.SerializeObject(bankAccessRequest), Encoding.UTF8, "application/json");
@@ -433,7 +433,7 @@ namespace Exthand.GatewayClient
         /// <returns></returns>
         public async Task<BankAccessResponseFinalize> FinalizeRequestBankAccessAsync(BankAccessRequestFinalize bankAccessRequestFinalize, string? XRequestID=null)
         {
-            var client = _httpClientFactory.CreateClient("BankingSdkGatewayClient");
+            var client = _httpClientFactory.CreateClient(GatewayConfigurator.ClientNameNoRetry);
             client = SetHeaders(client, XRequestID);
             
             var stringContent = new StringContent(JsonConvert.SerializeObject(bankAccessRequestFinalize), Encoding.UTF8, "application/json");
@@ -462,7 +462,7 @@ namespace Exthand.GatewayClient
         /// <returns>DeleteRequestResponse</returns>
         public async Task<GatewayBool> CancelBankAccessAsync(DeleteConsentRequest deleteConsentRequest, string? XRequestID=null)
         {
-            var client = _httpClientFactory.CreateClient("BankingSdkGatewayClient");
+            var client = _httpClientFactory.CreateClient(GatewayConfigurator.ClientName);
             client = SetHeaders(client, XRequestID);
             
             var stringContent = new StringContent(JsonConvert.SerializeObject(deleteConsentRequest), Encoding.UTF8, "application/json");
@@ -489,7 +489,7 @@ namespace Exthand.GatewayClient
         /// <returns>DeleteAccountResponse</returns>
         public async Task<GatewayBool> RemoveBankAccountAsync(DeleteAccountRequest deleteAccountRequest, string? XRequestID=null)
         {
-            var client = _httpClientFactory.CreateClient("BankingSdkGatewayClient");
+            var client = _httpClientFactory.CreateClient(GatewayConfigurator.ClientName);
             client = SetHeaders(client, XRequestID);
             
             var stringContent = new StringContent(JsonConvert.SerializeObject(deleteAccountRequest), Encoding.UTF8, "application/json");
@@ -512,7 +512,7 @@ namespace Exthand.GatewayClient
         public async Task<BankAccountsResponse> GetBankAccountsAsync(BankAccountsRequest bankAccountsRequest, string? XRequestID=null)
         {
 
-            var client = _httpClientFactory.CreateClient("BankingSdkGatewayClient");
+            var client = _httpClientFactory.CreateClient(GatewayConfigurator.ClientName);
             client = SetHeaders(client, XRequestID);
             
             var stringContent = new StringContent(JsonConvert.SerializeObject(bankAccountsRequest), Encoding.UTF8, "application/json");
@@ -541,7 +541,7 @@ namespace Exthand.GatewayClient
         public async Task<BalanceResponse> GetBalancesAsync(string accountId, BalanceRequest balanceRequest, string? XRequestID=null)
         {
 
-            var client = _httpClientFactory.CreateClient("BankingSdkGatewayClient");
+            var client = _httpClientFactory.CreateClient(GatewayConfigurator.ClientName);
             client = SetHeaders(client, XRequestID);
             
             var stringContent = new StringContent(JsonConvert.SerializeObject(balanceRequest), Encoding.UTF8, "application/json");
@@ -565,7 +565,7 @@ namespace Exthand.GatewayClient
 
         public async Task<TransactionResponse> GetTransactionsAsync(string accountId, TransactionRequest transactionRequest, string? XRequestID=null)
         {
-            var client = _httpClientFactory.CreateClient("BankingSdkGatewayClient");
+            var client = _httpClientFactory.CreateClient(GatewayConfigurator.ClientName);
             client = SetHeaders(client, XRequestID);
             
             var stringContent = new StringContent(JsonConvert.SerializeObject(transactionRequest), Encoding.UTF8, "application/json");
@@ -593,7 +593,7 @@ namespace Exthand.GatewayClient
 
         public async Task<TransactionResponse> GetTransactionsNextAsync(string accountId, TransactionPagingRequest transactionRequest, string? XRequestID=null)
         {
-            var client = _httpClientFactory.CreateClient("BankingSdkGatewayClient");
+            var client = _httpClientFactory.CreateClient(GatewayConfigurator.ClientName);
             client = SetHeaders(client, XRequestID);
             
             var stringContent = new StringContent(JsonConvert.SerializeObject(transactionRequest), Encoding.UTF8, "application/json");
@@ -627,7 +627,7 @@ namespace Exthand.GatewayClient
         /// <returns>TermsDTO object</returns>
         public async Task<TermsDTO> GetTCAsync(string language="", string? XRequestID=null)
         {
-            var client = _httpClientFactory.CreateClient("BankingSdkGatewayClient");
+            var client = _httpClientFactory.CreateClient(GatewayConfigurator.ClientName);
             client = SetHeaders(client, XRequestID);
             
             var result = await client.GetAsync("ob/gw/tc/latest?language=" + language);
@@ -664,7 +664,7 @@ namespace Exthand.GatewayClient
             if (string.IsNullOrEmpty(psuId))
                 return termsValidatedDTO;
 
-            var client = _httpClientFactory.CreateClient("BankingSdkGatewayClient");
+            var client = _httpClientFactory.CreateClient(GatewayConfigurator.ClientName);
             client = SetHeaders(client, XRequestID);
             
             var result = await client.GetAsync($"ob/gw/users/{psuId}/tc/latest" );
@@ -693,7 +693,7 @@ namespace Exthand.GatewayClient
         public async Task<UserRegisterResponse> CreateUserAsync(UserDTO userDTO, string? XRequestID=null)
         {
 
-            var client = _httpClientFactory.CreateClient("BankingSdkGatewayClient");
+            var client = _httpClientFactory.CreateClient(GatewayConfigurator.ClientNameNoRetry);
             client = SetHeaders(client, XRequestID);
             
             var stringContent = new StringContent(JsonConvert.SerializeObject(userDTO), Encoding.UTF8, "application/json");
@@ -727,7 +727,7 @@ namespace Exthand.GatewayClient
         /// <returns>VopResponse containing the match status</returns>
         public async Task<VopResponse> VerifyPayeeAsync(VopRequest vopRequest, string? XRequestID = null)
         {
-            var client = _httpClientFactory.CreateClient("BankingSdkGatewayClient");
+            var client = _httpClientFactory.CreateClient(GatewayConfigurator.ClientName);
             client = SetHeaders(client, XRequestID);
 
             var stringContent = new StringContent(JsonConvert.SerializeObject(vopRequest), Encoding.UTF8, "application/json");

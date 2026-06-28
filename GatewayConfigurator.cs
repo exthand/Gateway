@@ -14,7 +14,7 @@ namespace Exthand.GatewayClient
             {
                 c.BaseAddress = serverUrl;
                 c.Timeout = TimeSpan.FromMilliseconds(httpClientTimeoutMilliseconds);
-            }); 
+            }).AddStandardResilienceHandler(); 
             
             services.AddScoped<IGatewayService, GatewayService>();
         }

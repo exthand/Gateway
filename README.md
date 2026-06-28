@@ -305,7 +305,7 @@ public bool? creditLimitIncluded { get; set; }
     }
 ```
 
-## 8.1.00
+## 8.1.0
 
 ### Added Verification of Payee (VOP) support
 
@@ -356,3 +356,11 @@ New method `VerifyPayeeAsync` added to `IGatewayService` interface. Calls `POST 
     Console.WriteLine($"X-Correlation-ID: {response.XCorrelationID}");
     Console.WriteLine($"X-Operation-ID: {response.XOperationID}");
 ```
+
+
+## 8.1.1
+
+Added AddStandardResilienceHandler() to HttpClientFactory.
+This handler will retry failed calls to the gateway.
+Usefull in interactive mode, when the user is waiting for a response and the gateway is busy or down for a short time.
+

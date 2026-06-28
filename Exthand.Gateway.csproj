@@ -16,9 +16,9 @@
     <PackageLicenseExpression>MIT OR Apache-2.0</PackageLicenseExpression>
     <Description>This library connects your app to our Open Banking SAAS. You can then easily initiate payment (PIS), access bank accounts transactions and balances (AIS) and execute VOP (Verification Of Payee) over 2500 open bank APIs worldwide.</Description>
     <PackageTags>psd2 open banking exthand finance payments account statement transaction vop ais pis</PackageTags>
-    <PackageVersion>8.1.0</PackageVersion>
-    <ReleaseVersion>8.1.0</ReleaseVersion>
-    <Version>8.1.0</Version>
+    <PackageVersion>8.1.1</PackageVersion>
+    <ReleaseVersion>8.1.1</ReleaseVersion>
+    <Version>8.1.1</Version>
     <Configurations>Release;Debug</Configurations>
     <Title>Exthand.Gateway</Title>
   </PropertyGroup>
@@ -31,8 +31,9 @@
     <AssemblyName>Exthand.GatewayV2</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Http.Resilience" Version="10.7.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="Microsoft.Extensions.Http" Version="6.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Http" Version="10.0.9" />
   </ItemGroup>
 
   <ItemGroup>

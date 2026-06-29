@@ -358,9 +358,8 @@ New method `VerifyPayeeAsync` added to `IGatewayService` interface. Calls `POST 
 ```
 
 
-## 8.1.1
+## 8.2.0
 
 Added AddStandardResilienceHandler() to HttpClientFactory.
 This handler will retry failed calls to the gateway.
 Usefull in interactive mode, when the user is waiting for a response and the gateway is busy or down for a short time.
-
